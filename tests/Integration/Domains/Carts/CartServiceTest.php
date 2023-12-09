@@ -122,7 +122,8 @@ class CartServiceTest extends TestCase
         }
     }
 
-    public function testGetCard_should_throw_cart_not_found_exception(): void {
+    public function testGetCard_should_throw_cart_not_found_exception(): void
+    {
         // given
         $this->seed(DomainSeeder::class);
         $context = AppContext::background();

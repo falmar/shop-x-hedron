@@ -24,7 +24,7 @@ class ProductsController extends Controller
         $spec = new ListProductsInput();
         $spec->search = $request->get('search', '');
 
-        $output = $this->productService->list($context, $spec);
+        $output = $this->productService->listProducts($context, $spec);
 
         return $response
             ->setStatusCode(200)

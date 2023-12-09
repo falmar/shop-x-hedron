@@ -51,7 +51,7 @@ class CartControllerTest extends TestCase
         ]);
     }
 
-    public function testGetCart_should_return_bad_request_on_cart_id()
+    public function testGetCart_should_return_bad_request_on_cart_id(): void
     {
         // given
         $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
@@ -67,7 +67,7 @@ class CartControllerTest extends TestCase
         ]);
     }
 
-    public function testGetCart_should_return_not_found_on_cart_id()
+    public function testGetCart_should_return_not_found_on_cart_id(): void
     {
         // given
         $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);

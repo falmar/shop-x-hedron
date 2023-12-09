@@ -59,8 +59,11 @@ class CartController extends Controller
             /** @var Context $context */
             $context = AppContext::fromRequest($request);
 
+            /** @var string $cartId */
+            $cartId = $request->route()?->parameter('cart_id') ?? '';
+
             $spec = new GetCartInput();
-            $spec->cartId = $request->route()->parameter('cart_id');
+            $spec->cartId = $cartId;
             $spec->withItemCount = $request->get('with_item_count') == '1';
             $spec->withItems = $request->get('with_items') == '1';
 
@@ -79,7 +82,6 @@ class CartController extends Controller
                     'code' => 'bad_request',
                     'message' => $e->getMessage(),
                 ]);
-
         } catch (CartNotFoundException $e) {
             return $response
                 ->setStatusCode(404)

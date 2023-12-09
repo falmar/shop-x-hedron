@@ -24,6 +24,9 @@ readonly class CartItemRepositoryEloquent implements CartItemRepositoryInterface
         return CartItem::fromArray($eloquentItem->toArray());
     }
 
+    /**
+     * @inheritDoc
+     */
     public function countByCartId(string $cartId, array $options = []): int
     {
         return $this->eloquent->where('cart_id', $cartId)->count();

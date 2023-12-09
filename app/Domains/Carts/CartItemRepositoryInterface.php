@@ -18,7 +18,7 @@ interface CartItemRepositoryInterface
      * Get cart item by cart id and product id
      *
      * @param string $cartId
-     * @param array $options
+     * @param array<string, mixed> $options
      * @return int
      */
     public function countByCartId(string $cartId, array $options = []): int;

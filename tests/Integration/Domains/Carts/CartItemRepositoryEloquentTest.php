@@ -47,7 +47,8 @@ class CartItemRepositoryEloquentTest extends TestCase
         $this->assertMagicEntity($cartItem);
     }
 
-    public function testCountByCartId_should_return_zero(): void {
+    public function testCountByCartId_should_return_zero(): void
+    {
         // given
         $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
         $this->expectsDatabaseQueryCount(1);
@@ -62,7 +63,8 @@ class CartItemRepositoryEloquentTest extends TestCase
         $this->assertSame(0, $count, 'CartItem count should be 0');
     }
 
-    public function testCountByCartId_should_return_count(): void {
+    public function testCountByCartId_should_return_count(): void
+    {
         // given
         $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
         $this->expectsDatabaseQueryCount(1);
