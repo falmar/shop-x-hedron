@@ -12,15 +12,16 @@ interface CartItemRepositoryInterface
      * @param string $itemId
      * @return CartItem|null
      */
-    public function getById(string $itemId): ?CartItem;
+    public function findById(string $itemId): ?CartItem;
 
     /**
      * Get cart items by cart id
      *
      * @param string $cartId
+     * @param array<string, mixed> $options
      * @return CartItem[]
      */
-    public function listByCartId(string $cartId): array;
+    public function listByCartId(string $cartId, array $options = []): array;
 
     /**
      * Upsert cart item

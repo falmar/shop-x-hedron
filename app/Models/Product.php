@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $price
  * @property int $stock
  * @property int $review_count
- * @property int $review_rating
+ * @property float $review_rating
  * @property \DateTimeInterface|null $created_at
  * @property \DateTimeInterface|null $updated_at
  * @property \DateTimeInterface|null $deleted_at

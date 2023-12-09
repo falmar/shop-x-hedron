@@ -12,18 +12,19 @@ interface CartRepositoryInterface
      * @param string $cardId
      * @return Cart|null
      */
-    public function getById(string $cardId): ?Cart;
+    public function findById(string $cardId): ?Cart;
 
     /**
      * List carts
      *
+     * @param string $sessionId
      * @param array<string, mixed> $options
      * @return list<Cart>
      */
-    public function list(array $options = []): array;
+    public function listBySessionId(string $sessionId, array $options = []): array;
 
     /**
-     * Upsert carts
+     * Upsert a cart
      *
      * @param Cart $cart
      * @return bool
