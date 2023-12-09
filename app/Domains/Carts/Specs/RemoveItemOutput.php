@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Cart\Specs;
+namespace App\Domains\Carts\Specs;
 
 class RemoveItemOutput
 {

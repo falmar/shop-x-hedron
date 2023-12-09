@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Domains\Cart;
+namespace App\Domains\Carts;
 
-use App\Domains\Cart\Specs\AddItemInput;
-use App\Domains\Cart\Specs\AddItemOutput;
-use App\Domains\Cart\Specs\GetCartInput;
-use App\Domains\Cart\Specs\GetCartOutput;
-use App\Domains\Cart\Specs\ListCartsInput;
-use App\Domains\Cart\Specs\ListCartsOutput;
-use App\Domains\Cart\Specs\RemoveItemInput;
-use App\Domains\Cart\Specs\RemoveItemOutput;
-use App\Domains\Cart\Specs\UpdateItemInput;
-use App\Domains\Cart\Specs\UpdateItemOutput;
+use App\Domains\Carts\Specs\AddItemInput;
+use App\Domains\Carts\Specs\AddItemOutput;
+use App\Domains\Carts\Specs\GetCartInput;
+use App\Domains\Carts\Specs\GetCartOutput;
+use App\Domains\Carts\Specs\ListCartsInput;
+use App\Domains\Carts\Specs\ListCartsOutput;
+use App\Domains\Carts\Specs\RemoveItemInput;
+use App\Domains\Carts\Specs\RemoveItemOutput;
+use App\Domains\Carts\Specs\UpdateItemInput;
+use App\Domains\Carts\Specs\UpdateItemOutput;
 use App\Libraries\Context\Context;
 
 interface CartServiceInterface

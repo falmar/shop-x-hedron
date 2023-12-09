@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Domains\Cart;
+namespace App\Domains\Carts;
 
-use App\Domains\Cart\Entities\Cart;
+use App\Domains\Carts\Entities\Cart;
 
 interface CartRepositoryInterface
 {
