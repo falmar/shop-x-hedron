@@ -1,0 +1,6 @@
+name: ship-xhedron
+
+include:
+  - path:
+      - ../compose.yaml
+      - ./override.yaml

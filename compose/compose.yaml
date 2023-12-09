@@ -1,0 +1,6 @@
+name: ship-xhedron
+
+services: {}
+
+networks:
+  net: {}

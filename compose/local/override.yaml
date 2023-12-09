@@ -1,0 +1,25 @@
+services:
+  nginx:
+    build:
+      context: ./../.
+      dockerfile: ./docker/nginx/Dockerfile
+      target: local
+    networks:
+      - net
+    ports:
+      - 8080:80
+    volumes:
+      - ./../:/php-app
+  php:
+    user: '1000'
+    init: true
+    build:
+      context: ./../.
+      dockerfile: ./docker/php/Dockerfile
+      target: local
+    networks:
+      - net
+    volumes:
+      - ./../:/php-app
+    environment:
+      - COMPOSER_CACHE_DIR=/php-app/storage/cache/.composer
