@@ -68,7 +68,12 @@ class AppContext implements Context
         return new AppContext($attributes);
     }
 
-    public static function withRequest(Request $request, $context): Request
+    /**
+     * @param Request $request
+     * @param Context $context
+     * @return Request
+     */
+    public static function withRequest(Request $request, Context $context): Request
     {
         $request->attributes->set(
             AppContext::REQUEST_CONTEXT_KEY,
@@ -78,8 +83,12 @@ class AppContext implements Context
         return $request;
     }
 
+    /**
+     * @param Request $request
+     * @return Context|null
+     */
     public static function fromRequest(Request $request): ?Context
     {
-        return $request->attributes->get(AppContext::REQUEST_CONTEXT_KEY,);
+        return $request->attributes->get(AppContext::REQUEST_CONTEXT_KEY, null);
     }
 }

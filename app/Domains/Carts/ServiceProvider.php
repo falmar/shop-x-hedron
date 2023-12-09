@@ -8,5 +8,6 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     {
         $this->app->bind(CartRepositoryInterface::class, CartRepositoryEloquent::class);
         $this->app->bind(CartItemRepositoryInterface::class, CartItemRepositoryEloquent::class);
+        $this->app->bind(CartServiceInterface::class, CartService::class);
     }
 }

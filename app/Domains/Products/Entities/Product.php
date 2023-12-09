@@ -47,6 +47,9 @@ class Product implements \JsonSerializable
         return $obj;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return [
@@ -58,8 +61,8 @@ class Product implements \JsonSerializable
             'stock' => $this->stock,
             'review_count' => $this->reviewCount,
             'review_rating' => $this->reviewRating,
-            'created_at' => $this->createdAt->format('Y-m-d H:i:s.u'),
-            'updated_at' => $this->updatedAt->format('Y-m-d H:i:s.u'),
+            'created_at' => $this->createdAt->format(\DateTimeInterface::RFC3339),
+            'updated_at' => $this->updatedAt->format(\DateTimeInterface::RFC3339),
         ];
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\v1\CartController;
+use App\Http\Controllers\v1\ProductsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,6 +17,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => '/v1'], function () {
     Route::group(['prefix' => '/products'], function () {
-        Route::get('/', [\App\Http\Controllers\v1\ProductsController::class, 'listProducts']);
+        Route::get('/', [ProductsController::class, 'listProducts']);
+    });
+
+    Route::group(['prefix' => '/carts'], function () {
+        Route::get('/', [CartController::class, 'listCarts']);
     });
 });
