@@ -19,3 +19,4 @@ yarn-error.log
 /.vscode
 .php-cs-fixer.cache
 storage/cache/.composer
+build

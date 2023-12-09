@@ -14,6 +14,14 @@ interface ProductRepositoryInterface
      */
     public function findById(string $productId): ?Product;
 
+
+    /**
+     * Count all products or filter by options
+     * @param array<string, mixed> $options
+     * @return int
+     */
+    public function count(array $options): int;
+
     /**
      * List all products or filter by options
      * @param array<string, mixed> $options

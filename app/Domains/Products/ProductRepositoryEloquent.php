@@ -4,7 +4,7 @@ namespace App\Domains\Products;
 
 use App\Domains\Products\Entities\Product;
 
-class ProductRepositoryEloquent implements ProductRepositoryInterface
+readonly class ProductRepositoryEloquent implements ProductRepositoryInterface
 {
     public function __construct(
         private readonly \App\Models\Product $eloquent
@@ -23,6 +23,11 @@ class ProductRepositoryEloquent implements ProductRepositoryInterface
         }
 
         return Product::fromArray($eloquentItem->toArray());
+    }
+
+    public function count(array $options): int
+    {
+        return $this->eloquent->count();
     }
 
     /**

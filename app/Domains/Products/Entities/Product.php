@@ -2,7 +2,7 @@
 
 namespace App\Domains\Products\Entities;
 
-class Product
+class Product implements \JsonSerializable
 {
     public string $id;
     public string $brand;
@@ -45,5 +45,21 @@ class Product
         $obj->deletedAt = isset($data['deleted_at']) ? new \DateTimeImmutable($data['deleted_at']) : null;
 
         return $obj;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'brand' => $this->brand,
+            'name' => $this->name,
+            'image_url' => $this->imageURL,
+            'price' => $this->price,
+            'stock' => $this->stock,
+            'review_count' => $this->reviewCount,
+            'review_rating' => $this->reviewRating,
+            'created_at' => $this->createdAt->format('Y-m-d H:i:s.u'),
+            'updated_at' => $this->updatedAt->format('Y-m-d H:i:s.u'),
+        ];
     }
 }

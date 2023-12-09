@@ -2,8 +2,12 @@
 
 namespace App\Libraries\Context;
 
+use Illuminate\Http\Request;
+
 class AppContext implements Context
 {
+    private const REQUEST_CONTEXT_KEY = 'app/main-context';
+
     /** @var array<string, mixed> */
     protected array $attributes = [];
 
@@ -62,5 +66,20 @@ class AppContext implements Context
     public static function background(array $attributes = []): Context
     {
         return new AppContext($attributes);
+    }
+
+    public static function withRequest(Request $request, $context): Request
+    {
+        $request->attributes->set(
+            AppContext::REQUEST_CONTEXT_KEY,
+            $context
+        );
+
+        return $request;
+    }
+
+    public static function fromRequest(Request $request): ?Context
+    {
+        return $request->attributes->get(AppContext::REQUEST_CONTEXT_KEY,);
     }
 }

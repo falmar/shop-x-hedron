@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration\Products;
+namespace Tests\Integration\Domains\Products;
 
 use App\Domains\Carts\CartRepositoryEloquent;
 use App\Domains\Products\Entities\Product;
@@ -44,6 +44,22 @@ class ProductRepositoryEloquentTest extends TestCase
         // then
         $this->assertInstanceOf(Product::class, $product, 'should be an instance of Product');
         $this->assertMagicEntity($product);
+    }
+
+    public function testCount_should_return_total(): void
+    {
+        // given
+        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+        $this->expectsDatabaseQueryCount(1);
+
+        /** @var ProductRepositoryEloquent $repo */
+        $repo = $this->app->make(ProductRepositoryEloquent::class);
+
+        // when
+        $total = $repo->count([]);
+
+        // then
+        $this->assertEquals(2, $total, 'should be 2');
     }
 
     public function testList_should_return_entities(): void
