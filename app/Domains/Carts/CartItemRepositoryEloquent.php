@@ -4,7 +4,7 @@ namespace App\Domains\Carts;
 
 use App\Domains\Carts\Entities\CartItem;
 
-class CartItemRepositoryEloquent implements CartItemRepositoryInterface
+readonly class CartItemRepositoryEloquent implements CartItemRepositoryInterface
 {
     public function __construct(private readonly \App\Models\CartItem $eloquent)
     {
@@ -22,6 +22,11 @@ class CartItemRepositoryEloquent implements CartItemRepositoryInterface
         }
 
         return CartItem::fromArray($eloquentItem->toArray());
+    }
+
+    public function countByCartId(string $cartId, array $options = []): int
+    {
+        return $this->eloquent->where('cart_id', $cartId)->count();
     }
 
     /**

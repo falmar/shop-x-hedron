@@ -47,6 +47,36 @@ class CartItemRepositoryEloquentTest extends TestCase
         $this->assertMagicEntity($cartItem);
     }
 
+    public function testCountByCartId_should_return_zero(): void {
+        // given
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+        $this->expectsDatabaseQueryCount(1);
+
+        /** @var CartItemRepositoryEloquent $repo */
+        $repo = $this->app->make(CartItemRepositoryEloquent::class);
+
+        // when
+        $count = $repo->countByCartId('');
+
+        // then
+        $this->assertSame(0, $count, 'CartItem count should be 0');
+    }
+
+    public function testCountByCartId_should_return_count(): void {
+        // given
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+        $this->expectsDatabaseQueryCount(1);
+
+        /** @var CartItemRepositoryEloquent $repo */
+        $repo = $this->app->make(CartItemRepositoryEloquent::class);
+
+        // when
+        $count = $repo->countByCartId('018c463c-2bf4-737d-90a4-4f9d03b51000');
+
+        // then
+        $this->assertSame(1, $count, 'CartItem count should be 1');
+    }
+
     public function testListByCartId_should_return_empty_array(): void
     {
         // given

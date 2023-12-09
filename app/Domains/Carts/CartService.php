@@ -2,10 +2,13 @@
 
 namespace App\Domains\Carts;
 
-use App\Domains\Carts\Exceptions\InvalidSessionIdException;
+use App\Domains\Carts\Exceptions\CartNotFoundException;
+use App\Domains\Carts\Exceptions\InvalidUuidException;
 use App\Domains\Carts\Specs\AddItemInput;
 use App\Domains\Carts\Specs\AddItemOutput;
 use App\Domains\Carts\Specs\GetCartInput;
+use App\Domains\Carts\Specs\GetCartItemsInput;
+use App\Domains\Carts\Specs\GetCartItemsOutput;
 use App\Domains\Carts\Specs\GetCartOutput;
 use App\Domains\Carts\Specs\ListCartsInput;
 use App\Domains\Carts\Specs\ListCartsOutput;
@@ -20,7 +23,7 @@ readonly class CartService implements CartServiceInterface
 {
     public function __construct(
         private CartRepositoryInterface $cartRepository,
-        //        private CartItemRepositoryInterface $cartItemRepository,
+        private CartItemRepositoryInterface $cartItemRepository,
     ) {
     }
 
@@ -28,8 +31,8 @@ readonly class CartService implements CartServiceInterface
     {
         $response = new ListCartsOutput();
 
-        if (!$input->sessionId || !Uuid::isValid($input->sessionId)) {
-            throw new InvalidSessionIdException('Session ID is required');
+        if (!Uuid::isValid($input->sessionId)) {
+            throw new InvalidUuidException('Session ID is required');
         }
 
         $carts = $this->cartRepository->listBySessionId($input->sessionId);
@@ -40,8 +43,31 @@ readonly class CartService implements CartServiceInterface
 
     public function getCart(Context $context, GetCartInput $input): GetCartOutput
     {
+        if (!Uuid::isValid($input->cartId)) {
+            throw new InvalidUuidException('Cart ID is required');
+        }
+
+        $cart = $this->cartRepository->findById($input->cartId);
+
+        if (!$cart) {
+            throw new CartNotFoundException("Cart [{$input->cartId}] not found");
+        }
+
+        $output = new GetCartOutput();
+        $output->cart = $cart;
+
+        if ($input->withItemCount || $input->withItems) {
+            $output->itemCount = $this->cartItemRepository->countByCartId($cart->id);
+        }
+
+        return $output;
+    }
+
+    public function listCardItems(Context $context, GetCartItemsInput $input): GetCartItemsOutput
+    {
         throw new \Exception('not implemented');
     }
+
 
     public function addItemToCart(Context $context, AddItemInput $input): AddItemOutput
     {

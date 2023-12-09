@@ -2,6 +2,6 @@
 
 namespace App\Domains\Carts\Exceptions;
 
-class InvalidSessionIdException extends \Exception
+class InvalidUuidException extends \Exception
 {
 }

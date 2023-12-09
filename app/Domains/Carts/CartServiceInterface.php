@@ -2,9 +2,13 @@
 
 namespace App\Domains\Carts;
 
+use App\Domains\Carts\Exceptions\CartNotFoundException;
+use App\Domains\Carts\Exceptions\InvalidUuidException;
 use App\Domains\Carts\Specs\AddItemInput;
 use App\Domains\Carts\Specs\AddItemOutput;
 use App\Domains\Carts\Specs\GetCartInput;
+use App\Domains\Carts\Specs\GetCartItemsInput;
+use App\Domains\Carts\Specs\GetCartItemsOutput;
 use App\Domains\Carts\Specs\GetCartOutput;
 use App\Domains\Carts\Specs\ListCartsInput;
 use App\Domains\Carts\Specs\ListCartsOutput;
@@ -22,6 +26,7 @@ interface CartServiceInterface
      * @param Context $context
      * @param ListCartsInput $input
      * @return ListCartsOutput
+     * @throws InvalidUuidException
      */
     public function listCarts(Context $context, ListCartsInput $input): ListCartsOutput;
 
@@ -31,8 +36,18 @@ interface CartServiceInterface
      * @param Context $context
      * @param GetCartInput $input
      * @return GetCartOutput
+     * @throws InvalidUuidException|CartNotFoundException
      */
     public function getCart(Context $context, GetCartInput $input): GetCartOutput;
+
+    /**
+     * List cart items
+     *
+     * @param Context $context
+     * @param GetCartItemsInput $input
+     * @return GetCartItemsOutput
+     */
+    public function listCardItems(Context $context, GetCartItemsInput $input): GetCartItemsOutput;
 
     /**
      * Add items cart

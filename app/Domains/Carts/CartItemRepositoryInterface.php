@@ -15,6 +15,15 @@ interface CartItemRepositoryInterface
     public function findById(string $itemId): ?CartItem;
 
     /**
+     * Get cart item by cart id and product id
+     *
+     * @param string $cartId
+     * @param array $options
+     * @return int
+     */
+    public function countByCartId(string $cartId, array $options = []): int;
+
+    /**
      * Get cart items by cart id
      *
      * @param string $cartId

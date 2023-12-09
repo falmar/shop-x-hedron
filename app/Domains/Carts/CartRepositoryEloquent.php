@@ -4,7 +4,7 @@ namespace App\Domains\Carts;
 
 use App\Domains\Carts\Entities\Cart;
 
-class CartRepositoryEloquent implements CartRepositoryInterface
+readonly class CartRepositoryEloquent implements CartRepositoryInterface
 {
     public function __construct(private readonly \App\Models\Cart $eloquent)
     {
