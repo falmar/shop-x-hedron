@@ -25,5 +25,6 @@ Route::group(['prefix' => '/v1'], function () {
         Route::get('/{cart_id}', [CartController::class, 'getCart']);
         Route::get('/{cart_id}/items', [CartController::class, 'listCarItems']);
         Route::post('/{cart_id}/items', [CartController::class, 'addItemToCart']);
+        Route::post('/{cart_id}/items/{cart_item_id}', [CartController::class, 'updateCartItem']);
     });
 });

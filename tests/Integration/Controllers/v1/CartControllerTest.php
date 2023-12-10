@@ -107,7 +107,7 @@ class CartControllerTest extends TestCase
                     'data' => [
                         'id' => '018c463c-2bf4-737d-90a4-4f9d03b51000',
                     ],
-                    'item_count' => 1,
+                    'item_count' => 2,
                 ]
             ],
             [
@@ -304,5 +304,147 @@ class CartControllerTest extends TestCase
                 ]
             ]);
         }
+    }
+
+    public function testUpdateItem_should_return_not_found_on_item_id(): void
+    {
+        // given
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+
+        $inputs = [
+            '018c463c-2bf4-737d-90a4-009d03b50010'
+        ];
+
+        foreach ($inputs as $input) {
+            // when
+            $response = $this->post('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/' . $input, [
+                'quantity' => 1,
+            ]);
+
+            // then
+            $response->assertStatus(404);
+            $response->assertJsonStructure([
+                'code',
+                'message',
+            ]);
+        }
+    }
+
+    public function testUpdateItem_should_return_bad_request_on_negative_quantity(): void
+    {
+        // given
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+
+        $inputs = [
+            '0',
+            '-1'
+        ];
+
+        foreach ($inputs as $input) {
+            // when
+            $response = $this->post('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52000', [
+                'quantity' => $input,
+            ]);
+
+            // then
+            $response->assertStatus(400);
+            $response->assertJsonStructure([
+                'code',
+                'message',
+            ]);
+        }
+    }
+
+    public function testUpdateItem_should_return_bad_request_on_same_quantity(): void
+    {
+        // given
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+
+        $inputs = [
+            '1'
+        ];
+
+        foreach ($inputs as $input) {
+            // when
+            $response = $this->post('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52000', [
+                'quantity' => $input,
+            ]);
+
+            // then
+            $response->assertStatus(400);
+            $response->assertJsonStructure([
+                'code',
+                'message',
+            ]);
+        }
+    }
+
+    public function testUpdateItem_should_return_bad_request_exceeded_stock(): void
+    {
+        // given
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+
+        // when
+        $response = $this->post('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52000', [
+            'quantity' => 101,
+        ]);
+
+        // then
+        $response->assertStatus(400);
+        $response->assertJsonStructure([
+            'code',
+            'message',
+        ]);
+    }
+
+    public function testUpdateItem_should_return_bad_request_out_of_stock(): void
+    {
+        // given
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+
+        // when
+        $response = $this->post('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52001', [
+            'quantity' => 1,
+        ]);
+
+        // then
+        $response->assertStatus(400);
+        $response->assertJsonStructure([
+            'code',
+            'message',
+        ]);
+    }
+
+    public function testUpdateItem_should_update_item(): void
+    {
+        // given
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+
+        // when
+        $response = $this->post('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52000', [
+            'quantity' => 2,
+        ]);
+
+        // then
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'data' => [
+                'id',
+                'cart_id',
+                'product_id',
+                'quantity',
+                'price',
+                'product' => [
+                    'id',
+                    'name',
+                    'price',
+                    'stock',
+                    'image_url'
+                ]
+            ],
+        ]);
     }
 }

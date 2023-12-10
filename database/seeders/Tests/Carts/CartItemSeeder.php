@@ -19,6 +19,13 @@ class CartItemSeeder extends Seeder
                 'product_id' => '018c463c-2bf4-737d-90a4-4f9d03b50000',
                 'quantity' => 1,
                 'price' => 199
+            ],
+            [
+                'id' =>         '018c463c-2bf4-737d-90a4-4f9d03b52001',
+                'cart_id' =>    '018c463c-2bf4-737d-90a4-4f9d03b51000',
+                'product_id' => '018c463c-2bf4-737d-90a4-4f9d03b50001',
+                'quantity' => 1,
+                'price' => 5000
             ]
         ];
 

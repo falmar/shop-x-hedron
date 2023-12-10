@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\v1;
 
 use App\Domains\Carts\CartServiceInterface;
+use App\Domains\Carts\Exceptions\CartItemNotFoundException;
 use App\Domains\Carts\Exceptions\CartItemQuantityExceededStockException;
+use App\Domains\Carts\Exceptions\CartItemQuantityException;
 use App\Domains\Carts\Exceptions\CartNotFoundException;
 use App\Domains\Carts\Exceptions\InvalidUuidException;
 use App\Domains\Carts\Specs\AddItemInput;
 use App\Domains\Carts\Specs\GetCartInput;
 use App\Domains\Carts\Specs\GetCartItemsInput;
 use App\Domains\Carts\Specs\ListCartsInput;
+use App\Domains\Carts\Specs\UpdateItemInput;
 use App\Domains\Products\Exceptions\ProductOutOfStockException;
 use App\Http\Controllers\Controller;
 use App\Libraries\Context\AppContext;
@@ -170,6 +173,49 @@ class CartController extends Controller
                 ->setStatusCode(400)
                 ->setData([
                     'code' => 'bad_request',
+                    'message' => $e->getMessage(),
+                ]);
+        } catch (\Throwable $e) {
+            return $response
+                ->setStatusCode(500)
+                ->setData([
+                    'code' => 'internal_server_error',
+                    'message' => 'Internal Server Error',
+                ]);
+        }
+    }
+
+    public function updateCartItem(Request $request, JsonResponse $response): JsonResponse {
+        try {
+            /** @var Context $context */
+            $context = AppContext::fromRequest($request);
+
+            /** @var string $cartItemId */
+            $cartItemId = $request->route()?->parameter('cart_item_id') ?? '';
+
+            $spec = new UpdateItemInput();
+            $spec->cartItemId = $cartItemId;
+            $spec->quantity = (int)($request->get('quantity') ?? 1);
+
+            $item = $this->cartService->updateCartItem($context, $spec)->item;
+
+            return $response
+                ->setStatusCode(200)
+                ->setData([
+                    'data' => $item,
+                ]);
+        } catch (ProductOutOfStockException|CartItemQuantityExceededStockException|CartItemQuantityException $e) {
+            return $response
+                ->setStatusCode(400)
+                ->setData([
+                    'code' => 'bad_request',
+                    'message' => $e->getMessage(),
+                ]);
+        } catch (CartItemNotFoundException $e) {
+            return $response
+                ->setStatusCode(404)
+                ->setData([
+                    'code' => 'not_found',
                     'message' => $e->getMessage(),
                 ]);
         } catch (\Throwable $e) {

@@ -3,7 +3,9 @@
 namespace App\Domains\Carts;
 
 use App\Domains\Carts\Entities\CartItem;
+use App\Domains\Carts\Exceptions\CartItemNotFoundException;
 use App\Domains\Carts\Exceptions\CartItemQuantityExceededStockException;
+use App\Domains\Carts\Exceptions\CartItemQuantityException;
 use App\Domains\Carts\Exceptions\CartNotFoundException;
 use App\Domains\Carts\Exceptions\InvalidUuidException;
 use App\Domains\Carts\Specs\AddItemInput;
@@ -136,7 +138,40 @@ readonly class CartService implements CartServiceInterface
 
     public function updateCartItem(Context $context, UpdateItemInput $input): UpdateItemOutput
     {
-        throw new \Exception('not implemented');
+        if ($input->quantity <= 0) {
+            throw new CartItemQuantityException('Quantity must be greater than 0');
+        }
+
+        // get cart item
+        $cartItem = $this->cartItemRepository->findById($input->cartItemId);
+        if (!$cartItem) {
+            throw new CartItemNotFoundException("Cart item [{$input->cartItemId}] not found");
+        } elseif ($input->quantity == $cartItem->quantity) {
+            throw new CartItemQuantityException('Quantity must be different than current quantity');
+        }
+
+        // get product for cart item
+        $productSpec = new GetProductInput();
+        $productSpec->productId = $cartItem->productId;
+        $productSpec->inStock = true;
+
+        // let exception by raised and handled by caller
+        $product = $this->productService->getProduct($context, $productSpec)->product;
+
+        if ($product->stock < $input->quantity) {
+            throw new CartItemQuantityExceededStockException(
+                "product [{$product->id}] stock is below requested quantity"
+            );
+        }
+
+        $cartItem->quantity = $input->quantity;
+        $this->cartItemRepository->save($cartItem);
+
+        $output = new UpdateItemOutput();
+        $output->item = $cartItem;
+        $output->item->product = $product;
+
+        return $output;
     }
 
     public function removeItemFromCart(Context $context, RemoveItemInput $input): RemoveItemOutput
