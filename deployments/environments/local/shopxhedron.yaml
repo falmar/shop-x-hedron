@@ -10,6 +10,9 @@ spec:
       volumes:
         - name: sqlite
           emptyDir: { }
+        - name: dotenv
+          secret:
+            secretName: laravel-env
       containers:
         - name: php
           image: php-image
@@ -17,11 +20,15 @@ spec:
           volumeMounts:
             - name: sqlite
               mountPath: /php-app/sqlite
+            - name: dotenv
+              mountPath: /php-app/secrets
           env:
             - name: DB_CONNECTION
               value: sqlite
             - name: DB_DATABASE
               value: /php-app/sqlite/database.sqlite
+            - name: DOTENV_PATH
+              value: /php-app/secrets
         - name: nginx
           image: nginx-image
           imagePullPolicy: Always
@@ -32,9 +39,13 @@ spec:
               value: sqlite
             - name: DB_DATABASE
               value: /php-app/sqlite/database.sqlite
+            - name: DOTENV_PATH
+              value: /php-app/secrets
           volumeMounts:
             - name: sqlite
               mountPath: /php-app/sqlite
+            - name: dotenv
+              mountPath: /php-app/secrets
           command: [ "/bin/sh", "-c" ]
           args:
             - |

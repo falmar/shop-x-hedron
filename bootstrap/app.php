@@ -15,6 +15,8 @@ $app = new Illuminate\Foundation\Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );
 
+$app->useEnvironmentPath(env('DOTENV_PATH') ?? dirname(__DIR__));
+
 /*
 |--------------------------------------------------------------------------
 | Bind Important Interfaces

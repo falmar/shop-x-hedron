@@ -20,3 +20,9 @@ images:
   - name: php-image
     newName: docker.io/falmar/shop-x-hedron
     newTag: php
+
+secretGenerator:
+  - name: laravel-env
+    type: Opaque
+    files:
+      - secrets/.env
