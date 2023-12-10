@@ -13,14 +13,14 @@ class Product implements \JsonSerializable
     public int $reviewCount;
     public float $reviewRating;
 
-    /** @var \DateTimeImmutable */
-    public \DateTimeImmutable $createdAt;
+    /** @var \DateTimeInterface */
+    public \DateTimeInterface $createdAt;
 
-    /** @var \DateTimeImmutable */
-    public \DateTimeImmutable $updatedAt;
+    /** @var \DateTimeInterface */
+    public \DateTimeInterface $updatedAt;
 
-    /** @var \DateTimeImmutable|null */
-    public ?\DateTimeImmutable $deletedAt;
+    /** @var \DateTimeInterface|null */
+    public ?\DateTimeInterface $deletedAt = null;
 
     /**
      * @param array<string, mixed> $data

@@ -2,6 +2,7 @@
 
 namespace App\Domains\Carts;
 
+use App\Domains\Carts\Entities\Cart;
 use App\Domains\Carts\Entities\CartItem;
 use App\Domains\Carts\Exceptions\CartItemNotFoundException;
 use App\Domains\Carts\Exceptions\CartItemQuantityExceededStockException;
@@ -10,6 +11,8 @@ use App\Domains\Carts\Exceptions\CartNotFoundException;
 use App\Domains\Carts\Exceptions\NoSessionIdException;
 use App\Domains\Carts\Specs\AddItemInput;
 use App\Domains\Carts\Specs\AddItemOutput;
+use App\Domains\Carts\Specs\CreateCartInput;
+use App\Domains\Carts\Specs\CreateCartOutput;
 use App\Domains\Carts\Specs\GetCartInput;
 use App\Domains\Carts\Specs\GetCartItemsInput;
 use App\Domains\Carts\Specs\GetCartItemsOutput;
@@ -70,6 +73,22 @@ readonly class CartService implements CartServiceInterface
         if ($input->withItemCount) {
             $output->itemCount = $this->cartItemRepository->countByCartId($cart->id);
         }
+
+        return $output;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function createCart(Context $context, CreateCartInput $input): CreateCartOutput
+    {
+        $cart = new Cart();
+        // session id would come from the request; but for simplicity we generate one here
+        $cart->sessionId = Uuid::uuid7()->toString();
+        $this->cartRepository->save($cart);
+
+        $output = new CreateCartOutput();
+        $output->cart = $cart;
 
         return $output;
     }

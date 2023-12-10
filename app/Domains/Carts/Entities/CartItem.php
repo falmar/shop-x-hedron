@@ -12,14 +12,14 @@ class CartItem implements \JsonSerializable
     public int $quantity;
     public int $price;
 
-    /** @var \DateTimeImmutable */
-    public \DateTimeImmutable $createdAt;
+    /** @var \DateTimeInterface */
+    public \DateTimeInterface $createdAt;
 
-    /** @var \DateTimeImmutable */
-    public \DateTimeImmutable $updatedAt;
+    /** @var \DateTimeInterface */
+    public \DateTimeInterface $updatedAt;
 
-    /** @var \DateTimeImmutable|null */
-    public ?\DateTimeImmutable $deletedAt;
+    /** @var \DateTimeInterface|null */
+    public ?\DateTimeInterface $deletedAt = null;
 
     // CROSSED-BOUNDARY
     public ?Product $product = null;

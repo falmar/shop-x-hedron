@@ -6,6 +6,7 @@ use App\Domains\Carts\CartService;
 use App\Domains\Carts\Entities\Cart;
 use App\Domains\Carts\Entities\CartItem;
 use App\Domains\Carts\Exceptions\CartItemQuantityExceededStockException;
+use App\Domains\Carts\Specs\CreateCartInput;
 use App\Domains\Carts\Specs\GetCartInput;
 use App\Domains\Carts\Specs\ListCartsInput;
 use App\Domains\Products\Entities\Product;
@@ -13,6 +14,7 @@ use App\Domains\Products\Exceptions\ProductOutOfStockException;
 use App\Libraries\Context\AppContext;
 use Database\Seeders\Tests\Carts\DomainSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 
 class CartServiceTest extends TestCase
@@ -512,6 +514,29 @@ class CartServiceTest extends TestCase
         // then
         $this->assertSoftDeleted('carts', [
             'id' => $cartId,
+        ]);
+    }
+
+    public function testCreateCart_should_create_entity(): void
+    {
+        // given
+        $context = AppContext::background();
+
+        /** @var CartService $service */
+        $service = $this->app->make(CartService::class);
+
+        $spec = new CreateCartInput();
+
+        // when
+        $output = $service->createCart($context, $spec);
+
+        // then
+        $this->assertInstanceOf(Cart::class, $output->cart);
+        $this->assertTrue(Uuid::isValid($output->cart->id));
+        $this->assertTrue(Uuid::isValid($output->cart->sessionId));
+
+        $this->assertDatabaseHas('carts', [
+            'id' => $output->cart->id,
         ]);
     }
 }

@@ -9,6 +9,8 @@ use App\Domains\Carts\Exceptions\CartNotFoundException;
 use App\Domains\Carts\Exceptions\NoSessionIdException;
 use App\Domains\Carts\Specs\AddItemInput;
 use App\Domains\Carts\Specs\AddItemOutput;
+use App\Domains\Carts\Specs\CreateCartInput;
+use App\Domains\Carts\Specs\CreateCartOutput;
 use App\Domains\Carts\Specs\GetCartInput;
 use App\Domains\Carts\Specs\GetCartItemsInput;
 use App\Domains\Carts\Specs\GetCartItemsOutput;
@@ -47,6 +49,15 @@ interface CartServiceInterface
     public function getCart(Context $context, GetCartInput $input): GetCartOutput;
 
     /**
+     * Create a new cart
+     *
+     * @param Context $context
+     * @param CreateCartInput $input
+     * @return CreateCartOutput
+     */
+    public function createCart(Context $context, CreateCartInput $input): CreateCartOutput;
+
+    /**
      * Delete the cart
      *
      * @param Context $context
@@ -72,6 +83,7 @@ interface CartServiceInterface
      * @param AddItemInput $input
      * @return AddItemOutput
      * @throws CartItemQuantityExceededStockException|ProductOutOfStockException
+     * @throws CartNotFoundException
      */
     public function addCartItem(Context $context, AddItemInput $input): AddItemOutput;
 
@@ -83,6 +95,7 @@ interface CartServiceInterface
      * @return UpdateItemOutput
      * @throws CartItemNotFoundException|CartItemQuantityException|CartItemQuantityExceededStockException
      * @throws ProductOutOfStockException
+     * @throws CartNotFoundException
      */
     public function updateCartItem(Context $context, UpdateItemInput $input): UpdateItemOutput;
 
@@ -93,6 +106,7 @@ interface CartServiceInterface
      * @param RemoveItemInput $input
      * @return RemoveItemOutput
      * @throws CartItemNotFoundException
+     * @throws CartNotFoundException
      */
     public function removeCartItem(Context $context, RemoveItemInput $input): RemoveItemOutput;
 }

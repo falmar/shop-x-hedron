@@ -60,6 +60,8 @@ readonly class CartRepositoryEloquent implements CartRepositoryInterface
 
         $result = $eloquentItem->save();
         $cart->id = $eloquentItem->id;
+        $cart->createdAt = $eloquentItem->created_at;
+        $cart->updatedAt = $eloquentItem->updated_at;
 
         return $result;
     }

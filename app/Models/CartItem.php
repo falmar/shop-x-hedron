@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Libraries\HasUuidTrait;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -13,9 +14,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $product_id
  * @property int $quantity
  * @property int $price
- * @property \DateTimeInterface|null $created_at
- * @property \DateTimeInterface|null $updated_at
- * @property \DateTimeInterface|null $deleted_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Carbon|null $deleted_at
  */
 class CartItem extends Model
 {

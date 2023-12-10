@@ -3,6 +3,7 @@
 namespace App\Domains\Products;
 
 use App\Domains\Products\Entities\Product;
+use Carbon\Carbon;
 
 readonly class ProductRepositoryEloquent implements ProductRepositoryInterface
 {
@@ -98,6 +99,8 @@ readonly class ProductRepositoryEloquent implements ProductRepositoryInterface
         }
 
         $product->id = $eloquentItem->id;
+        $product->createdAt = $eloquentItem->created_at->toDateTimeImmutable();
+        $product->updatedAt = $eloquentItem->updated_at->toDateTimeImmutable();
 
         return true;
     }

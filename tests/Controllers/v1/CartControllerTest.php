@@ -326,9 +326,12 @@ class CartControllerTest extends TestCase
 
         foreach ($inputs as $input) {
             // when
-            $response = $this->post('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52000', [
-                'quantity' => $input,
-            ]);
+            $response = $this->post(
+                '/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52000',
+                [
+                    'quantity' => $input,
+                ]
+            );
 
             // then
             $response->assertStatus(400);
@@ -350,9 +353,12 @@ class CartControllerTest extends TestCase
 
         foreach ($inputs as $input) {
             // when
-            $response = $this->post('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52000', [
-                'quantity' => $input,
-            ]);
+            $response = $this->post(
+                '/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52000',
+                [
+                    'quantity' => $input,
+                ]
+            );
 
             // then
             $response->assertStatus(400);
@@ -370,9 +376,12 @@ class CartControllerTest extends TestCase
         $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
 
         // when
-        $response = $this->post('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52000', [
-            'quantity' => 101,
-        ]);
+        $response = $this->post(
+            '/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52000',
+            [
+                'quantity' => 101,
+            ]
+        );
 
         // then
         $response->assertStatus(400);
@@ -389,9 +398,12 @@ class CartControllerTest extends TestCase
         $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
 
         // when
-        $response = $this->post('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52001', [
-            'quantity' => 1,
-        ]);
+        $response = $this->post(
+            '/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52001',
+            [
+                'quantity' => 1,
+            ]
+        );
 
         // then
         $response->assertStatus(400);
@@ -408,9 +420,12 @@ class CartControllerTest extends TestCase
         $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
 
         // when
-        $response = $this->post('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52000', [
-            'quantity' => 2,
-        ]);
+        $response = $this->post(
+            '/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52000',
+            [
+                'quantity' => 2,
+            ]
+        );
 
         // then
         $response->assertStatus(200);
@@ -460,9 +475,31 @@ class CartControllerTest extends TestCase
         $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
 
         // when
-        $response = $this->delete('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52000');
+        $response = $this->delete(
+            '/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52000'
+        );
 
         // then
         $response->assertStatus(204);
+    }
+
+    public function testCreateCart_should_create_entity(): void
+    {
+        // given
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+
+        // when
+        $response = $this->post('/api/v1/carts');
+
+        // then
+        $response->assertStatus(201);
+        $response->assertJsonStructure([
+            'data' => [
+                'id',
+                'session_id',
+                'created_at',
+                'updated_at',
+            ],
+        ]);
     }
 }

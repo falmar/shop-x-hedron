@@ -61,7 +61,8 @@ class CheckoutServiceTest extends TestCase
         ]);
     }
 
-    public function testCheckout_should_delete_cart(): void {
+    public function testCheckout_should_delete_cart(): void
+    {
         // given
         $context = AppContext::background();
         $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);

@@ -9,6 +9,7 @@ use App\Domains\Carts\Exceptions\CartItemQuantityException;
 use App\Domains\Carts\Exceptions\CartNotFoundException;
 use App\Domains\Carts\Exceptions\NoSessionIdException;
 use App\Domains\Carts\Specs\AddItemInput;
+use App\Domains\Carts\Specs\CreateCartInput;
 use App\Domains\Carts\Specs\GetCartInput;
 use App\Domains\Carts\Specs\GetCartItemsInput;
 use App\Domains\Carts\Specs\ListCartsInput;
@@ -99,6 +100,31 @@ class CartController extends Controller
         }
     }
 
+    public function createCart(Request $request, JsonResponse $response): JsonResponse
+    {
+        try {
+            /** @var Context $context */
+            $context = AppContext::fromRequest($request);
+
+            $spec = new CreateCartInput();
+
+            $cart = $this->cartService->createCart($context, $spec)->cart;
+
+            return $response
+                ->setStatusCode(201)
+                ->setData([
+                    'data' => $cart,
+                ]);
+        } catch (\Throwable $e) {
+            return $response
+                ->setStatusCode(500)
+                ->setData([
+                    'code' => 'internal_server_error',
+                    'message' => 'Internal Server Error',
+                ]);
+        }
+    }
+
     public function listCarItems(Request $request, JsonResponse $response): JsonResponse
     {
         try {
@@ -168,6 +194,13 @@ class CartController extends Controller
                     'code' => 'bad_request',
                     'message' => $e->getMessage(),
                 ]);
+        } catch (CartNotFoundException $e) {
+            return $response
+                ->setStatusCode(404)
+                ->setData([
+                    'code' => 'not_found',
+                    'message' => $e->getMessage(),
+                ]);
         } catch (\Throwable $e) {
             return $response
                 ->setStatusCode(500)
@@ -205,7 +238,7 @@ class CartController extends Controller
                     'code' => 'bad_request',
                     'message' => $e->getMessage(),
                 ]);
-        } catch (CartItemNotFoundException $e) {
+        } catch (CartNotFoundException|CartItemNotFoundException $e) {
             return $response
                 ->setStatusCode(404)
                 ->setData([
@@ -238,7 +271,7 @@ class CartController extends Controller
 
             return $response
                 ->setStatusCode(204);
-        } catch (CartItemNotFoundException $e) {
+        } catch (CartNotFoundException|CartItemNotFoundException $e) {
             return $response
                 ->setStatusCode(404)
                 ->setData([
