@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: shopxhedron
+labels:
+  - includeTemplates: true
+    pairs:
+      shopxhedron/env: local
+
+
+resources:
+  - ../../base
+
+patches:
+  - path: shopxhedron.yaml
+
+images:
+  - name: nginx-image
+    newName: docker.io/falmar/shop-x-hedron
+    newTag: nginx
+  - name: php-image
+    newName: docker.io/falmar/shop-x-hedron
+    newTag: php

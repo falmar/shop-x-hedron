@@ -1,0 +1,54 @@
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  annotations:
+    kubectl.kubernetes.io/default-container: php
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      shopxhedron/app: app
+  template:
+    metadata:
+      labels:
+        shopxhedron/app: app
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /metrics
+        prometheus.io/port: "80"
+    spec:
+      containers:
+        - name: php
+          imagePullPolicy: IfNotPresent
+          image: php-image
+        - name: nginx
+          imagePullPolicy: IfNotPresent
+          image: nginx-image
+          ports:
+            - containerPort: 80
+              name: http
+      initContainers:
+        - name: migrate
+          imagePullPolicy: IfNotPresent
+          image: php-image
+          command: [ "php", "artisan", "migrate" ]
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app
+  labels:
+    shopxhedron/app: app
+spec:
+  selector:
+    shopxhedron/app: app
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      name: http
+      port: 80
+---

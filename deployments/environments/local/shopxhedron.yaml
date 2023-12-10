@@ -1,0 +1,42 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  replicas: 1
+  template:
+    spec:
+      volumes:
+        - name: sqlite
+          emptyDir: { }
+      containers:
+        - name: php
+          image: php-image
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: sqlite
+              mountPath: /php-app/sqlite
+          env:
+            - name: DB_CONNECTION
+              value: sqlite
+            - name: DB_DATABASE
+              value: /php-app/sqlite/database.sqlite
+        - name: nginx
+          image: nginx-image
+          imagePullPolicy: Always
+      initContainers:
+        - name: migrate
+          env:
+            - name: DB_CONNECTION
+              value: sqlite
+            - name: DB_DATABASE
+              value: /php-app/sqlite/database.sqlite
+          volumeMounts:
+            - name: sqlite
+              mountPath: /php-app/sqlite
+          command: [ "/bin/sh", "-c" ]
+          args:
+            - |
+              touch /php-app/sqlite/database.sqlite
+              php artisan migrate
