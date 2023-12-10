@@ -48,6 +48,7 @@ interface CartServiceInterface
      * @param Context $context
      * @param GetCartItemsInput $input
      * @return GetCartItemsOutput
+     * @throws CartNotFoundException
      */
     public function listCardItems(Context $context, GetCartItemsInput $input): GetCartItemsOutput;
 

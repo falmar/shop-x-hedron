@@ -8,6 +8,7 @@ use App\Domains\Carts\Exceptions\CartNotFoundException;
 use App\Domains\Carts\Exceptions\InvalidUuidException;
 use App\Domains\Carts\Specs\AddItemInput;
 use App\Domains\Carts\Specs\GetCartInput;
+use App\Domains\Carts\Specs\GetCartItemsInput;
 use App\Domains\Carts\Specs\ListCartsInput;
 use App\Domains\Products\Exceptions\ProductOutOfStockException;
 use App\Http\Controllers\Controller;
@@ -15,7 +16,6 @@ use App\Libraries\Context\AppContext;
 use App\Libraries\Context\Context;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
@@ -85,6 +85,47 @@ class CartController extends Controller
                 ->setData([
                     'code' => 'bad_request',
                     'message' => $e->getMessage(),
+                ]);
+        } catch (CartNotFoundException $e) {
+            return $response
+                ->setStatusCode(404)
+                ->setData([
+                    'code' => 'not_found',
+                    'message' => $e->getMessage(),
+                ]);
+        } catch (\Throwable $e) {
+            return $response
+                ->setStatusCode(500)
+                ->setData([
+                    'code' => 'internal_server_error',
+                    'message' => 'Internal Server Error',
+                ]);
+        }
+    }
+
+    public function listCarItems(Request $request, JsonResponse $response): JsonResponse
+    {
+        try {
+            /** @var Context $context */
+            $context = AppContext::fromRequest($request);
+
+            /** @var string $cartId */
+            $cartId = $request->route()?->parameter('cart_id') ?? '';
+
+            $spec = new GetCartItemsInput();
+            $spec->cartId = $cartId;
+
+            if ($request->get('with_products') == '0' || $request->get('with_products') == 'false   ') {
+                $spec->withProduct = false;
+            }
+
+            $output = $this->cartService->listCardItems($context, $spec);
+
+            return $response
+                ->setStatusCode(200)
+                ->setData([
+                    'total' => $output->total,
+                    'data' => $output->items,
                 ]);
         } catch (CartNotFoundException $e) {
             return $response

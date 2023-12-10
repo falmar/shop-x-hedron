@@ -82,7 +82,8 @@ class ProductRepositoryEloquentTest extends TestCase
         $this->assertMagicEntity($products[0]);
     }
 
-    public function testList_should_return_entities_by_ids(): void {
+    public function testList_should_return_entities_by_ids(): void
+    {
         // given
         $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
         $this->expectsDatabaseQueryCount(1);
@@ -104,7 +105,8 @@ class ProductRepositoryEloquentTest extends TestCase
         $this->assertContainsOnlyInstancesOf(Product::class, $products, 'should be an array of Product');
     }
 
-    public function testList_should_not_return_entities_by_ids(): void {
+    public function testList_should_not_return_entities_by_ids(): void
+    {
         // given
         $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
         $this->expectsDatabaseQueryCount(1);

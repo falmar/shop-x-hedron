@@ -327,4 +327,80 @@ class CartServiceTest extends TestCase
             'quantity' => 4,
         ]);
     }
+
+    public function testListCartItems_should_throw_not_found(): void
+    {
+        // given
+        $this->seed(DomainSeeder::class);
+        $context = AppContext::background();
+        $cartId = '996cb20e-1e35-42c5-83b4-36a2e58e538f';
+
+        /** @var CartService $service */
+        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $spec = new \App\Domains\Carts\Specs\GetCartItemsInput();
+        $spec->cartId = $cartId;
+
+        // when
+        try {
+            $service->listCardItems($context, $spec);
+
+            $this->fail('Expected exception to be thrown');
+        } catch (\Throwable $th) {
+            $this->assertInstanceOf(\App\Domains\Carts\Exceptions\CartNotFoundException::class, $th);
+        }
+    }
+
+    public function testListCartItems_should_return_a_list_of_entities_with_products(): void
+    {
+        // given
+        $this->seed(DomainSeeder::class);
+        $context = AppContext::background();
+        $cartId = '018c463c-2bf4-737d-90a4-4f9d03b51000';
+
+        /** @var CartService $service */
+        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $spec = new \App\Domains\Carts\Specs\GetCartItemsInput();
+        $spec->cartId = $cartId;
+
+        // when
+        $output = $service->listCardItems($context, $spec);
+
+        // then
+        $this->assertCount(1, $output->items);
+        $this->assertInstanceOf(CartItem::class, $output->items[0]);
+        $this->assertInstanceOf(Product::class, $output->items[0]->product);
+
+        // given
+        $spec->withProduct = true;
+
+        // when
+        $output = $service->listCardItems($context, $spec);
+
+        // then
+        $this->assertCount(1, $output->items);
+        $this->assertInstanceOf(CartItem::class, $output->items[0]);
+        $this->assertInstanceOf(Product::class, $output->items[0]->product);
+    }
+
+    public function testListCartItems_should_return_a_list_of_entities_without_products(): void
+    {
+        // given
+        $this->seed(DomainSeeder::class);
+        $context = AppContext::background();
+        $cartId = '018c463c-2bf4-737d-90a4-4f9d03b51000';
+
+        /** @var CartService $service */
+        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $spec = new \App\Domains\Carts\Specs\GetCartItemsInput();
+        $spec->cartId = $cartId;
+        $spec->withProduct = false;
+
+        // when
+        $output = $service->listCardItems($context, $spec);
+
+        // then
+        $this->assertCount(1, $output->items);
+        $this->assertInstanceOf(CartItem::class, $output->items[0]);
+        $this->assertNull($output->items[0]->product);
+    }
 }

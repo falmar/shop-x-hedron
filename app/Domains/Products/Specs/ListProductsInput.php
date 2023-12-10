@@ -6,5 +6,6 @@ class ListProductsInput
 {
     public ?string $search = null;
 
+    /** @var string[]  */
     public array $ids = [];
 }

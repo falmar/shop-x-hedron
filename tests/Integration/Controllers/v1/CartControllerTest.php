@@ -144,7 +144,7 @@ class CartControllerTest extends TestCase
         }
     }
 
-    public function testAddToCart_should_return_bad_request_out_of_stock()
+    public function testAddToCart_should_return_bad_request_out_of_stock(): void
     {
         // given
         $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
@@ -164,7 +164,7 @@ class CartControllerTest extends TestCase
         ]);
     }
 
-    public function testAddToCart_should_return_bad_request_exceeded_stock()
+    public function testAddToCart_should_return_bad_request_exceeded_stock(): void
     {
         // given
         $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
@@ -184,7 +184,8 @@ class CartControllerTest extends TestCase
         ]);
     }
 
-    public function testAddToCart_should_create_item() {
+    public function testAddToCart_should_create_item(): void
+    {
         // given
         $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
         $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
@@ -212,5 +213,96 @@ class CartControllerTest extends TestCase
                 ]
             ],
         ]);
+    }
+
+    public function testListCardItems_should_return_not_found_on_cart_id(): void
+    {
+        // given
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+
+        $inputs = [
+            '018c463c-2bf4-737d-90a4-009d03b50010'
+        ];
+
+        foreach ($inputs as $input) {
+            // when
+            $response = $this->get('/api/v1/carts/' . $input . '/items');
+
+            // then
+            $response->assertStatus(404);
+            $response->assertJsonStructure([
+                'code',
+                'message',
+            ]);
+        }
+    }
+
+    public function testListCardItems_should_return_a_list_of_items_with_products(): void
+    {
+        // given
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+
+        // when
+        $response = $this->get('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items');
+
+        // then
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'data' => [
+                '*' => [
+                    'id',
+                    'cart_id',
+                    'product_id',
+                    'quantity',
+                    'price',
+                    'product' => [
+                        'id',
+                        'name',
+                        'price',
+                        'stock',
+                        'image_url'
+                    ]
+                ],
+            ],
+        ]);
+    }
+
+    public function testListCardItems_should_return_a_list_of_items_without_products(): void
+    {
+        // given
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+
+        $inputs = [
+            '0',
+            'false'
+        ];
+
+        foreach ($inputs as $input) {
+            // when
+            $response = $this->get('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items?with_products=' . $input);
+
+            // then
+            $response->assertStatus(200);
+            $response->assertJsonStructure([
+                'data' => [
+                    '*' => [
+                        'id',
+                        'cart_id',
+                        'product_id',
+                        'quantity',
+                        'price',
+                    ],
+                ],
+            ]);
+            $response->assertJsonMissing([
+                'product' => [
+                    'id',
+                    'name',
+                    'price',
+                    'stock',
+                    'image_url'
+                ]
+            ]);
+        }
     }
 }

@@ -20,6 +20,7 @@ use App\Domains\Carts\Specs\UpdateItemInput;
 use App\Domains\Carts\Specs\UpdateItemOutput;
 use App\Domains\Products\ProductServiceInterface;
 use App\Domains\Products\Specs\GetProductInput;
+use App\Domains\Products\Specs\ListProductsInput;
 use App\Libraries\Context\Context;
 use Ramsey\Uuid\Uuid;
 
@@ -70,7 +71,20 @@ readonly class CartService implements CartServiceInterface
 
     public function listCardItems(Context $context, GetCartItemsInput $input): GetCartItemsOutput
     {
-        throw new \Exception('not implemented');
+        // get cart
+        $cart = $this->cartRepository->findById($input->cartId);
+        if (!$cart) {
+            throw new CartNotFoundException("Cart [{$input->cartId}] not found");
+        }
+
+        $output = new GetCartItemsOutput();
+        $output->items = $this->cartItemRepository->listByCartId($cart->id);
+
+        if ($input->withProduct) {
+            $output->items = $this->attachProducts($context, $output->items);
+        }
+
+        return $output;
     }
 
     public function addItemToCart(Context $context, AddItemInput $input): AddItemOutput
@@ -104,7 +118,9 @@ readonly class CartService implements CartServiceInterface
         }
 
         if ($product->stock < $cartItem->quantity) {
-            throw new CartItemQuantityExceededStockException("product [{$product->id}] stock is below requested quantity");
+            throw new CartItemQuantityExceededStockException(
+                "product [{$product->id}] stock is below requested quantity"
+            );
         }
 
         $this->cartItemRepository->save($cartItem);
@@ -126,5 +142,39 @@ readonly class CartService implements CartServiceInterface
     public function removeItemFromCart(Context $context, RemoveItemInput $input): RemoveItemOutput
     {
         throw new \Exception('not implemented');
+    }
+
+    /**
+     * @param Context $context
+     * @param list<CartItem> $cartItems
+     * @return list<CartItem>
+     */
+    private function attachProducts(Context $context, array $cartItems): array
+    {
+        $spec = new ListProductsInput();
+        // get product ids from cart items
+
+        $spec->ids = array_filter(
+            array_map(fn ($item) => $item->productId, $cartItems),
+            fn ($id) => is_string($id) && Uuid::isValid($id)
+        );
+
+        if (!count($spec->ids)) {
+            return $cartItems;
+        }
+
+        // make a dictionary of products by id
+        $products = array_reduce(
+            $this->productService->listProducts($context, $spec)->products,
+            fn ($acc, $item) => [...$acc, $item->id => $item],
+            []
+        );
+
+        foreach ($cartItems as $item) {
+            $item->product = $products[$item->productId] ?? null;
+        }
+
+        // attach product to cart item
+        return $cartItems;
     }
 }

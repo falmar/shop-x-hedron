@@ -171,7 +171,7 @@ class ProductServiceTest extends TestCase
         $spec->ids = [
             '018c463c-2bf4-737d-90a4-009d03b50000',
             'bad_uuid',
-            null
+            ''
         ];
 
         // when
