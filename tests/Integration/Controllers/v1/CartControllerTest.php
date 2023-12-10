@@ -447,4 +447,38 @@ class CartControllerTest extends TestCase
             ],
         ]);
     }
+
+    public function testRemoveItem_should_throw_not_found(): void
+    {
+        // given
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+
+        $inputs = [
+            '018c463c-2bf4-737d-90a4-009d03b50010'
+        ];
+
+        foreach ($inputs as $input) {
+            // when
+            $response = $this->delete('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/' . $input);
+
+            // then
+            $response->assertStatus(404);
+            $response->assertJsonStructure([
+                'code',
+                'message',
+            ]);
+        }
+    }
+
+    public function testRemoveItem_should_remove_item(): void
+    {
+        // given
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+
+        // when
+        $response = $this->delete('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52000');
+
+        // then
+        $response->assertStatus(204);
+    }
 }

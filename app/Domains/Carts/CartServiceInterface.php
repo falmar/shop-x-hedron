@@ -62,7 +62,7 @@ interface CartServiceInterface
      * @return AddItemOutput
      * @throws CartItemQuantityExceededStockException|ProductOutOfStockException
      */
-    public function addItemToCart(Context $context, AddItemInput $input): AddItemOutput;
+    public function addCartItem(Context $context, AddItemInput $input): AddItemOutput;
 
     /**
      * Update a cart items
@@ -81,6 +81,7 @@ interface CartServiceInterface
      * @param Context $context
      * @param RemoveItemInput $input
      * @return RemoveItemOutput
+     * @throws CartItemNotFoundException
      */
-    public function removeItemFromCart(Context $context, RemoveItemInput $input): RemoveItemOutput;
+    public function removeCartItem(Context $context, RemoveItemInput $input): RemoveItemOutput;
 }

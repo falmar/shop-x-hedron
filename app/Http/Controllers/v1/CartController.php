@@ -12,6 +12,7 @@ use App\Domains\Carts\Specs\AddItemInput;
 use App\Domains\Carts\Specs\GetCartInput;
 use App\Domains\Carts\Specs\GetCartItemsInput;
 use App\Domains\Carts\Specs\ListCartsInput;
+use App\Domains\Carts\Specs\RemoveItemInput;
 use App\Domains\Carts\Specs\UpdateItemInput;
 use App\Domains\Products\Exceptions\ProductOutOfStockException;
 use App\Http\Controllers\Controller;
@@ -161,7 +162,7 @@ class CartController extends Controller
             $spec->productId = $request->get('product_id') ?? '';
             $spec->quantity = (int)($request->get('quantity') ?? 1);
 
-            $item = $this->cartService->addItemToCart($context, $spec)->item;
+            $item = $this->cartService->addCartItem($context, $spec)->item;
 
             return $response
                 ->setStatusCode(201)
@@ -185,7 +186,8 @@ class CartController extends Controller
         }
     }
 
-    public function updateCartItem(Request $request, JsonResponse $response): JsonResponse {
+    public function updateCartItem(Request $request, JsonResponse $response): JsonResponse
+    {
         try {
             /** @var Context $context */
             $context = AppContext::fromRequest($request);
@@ -211,6 +213,39 @@ class CartController extends Controller
                     'code' => 'bad_request',
                     'message' => $e->getMessage(),
                 ]);
+        } catch (CartItemNotFoundException $e) {
+            return $response
+                ->setStatusCode(404)
+                ->setData([
+                    'code' => 'not_found',
+                    'message' => $e->getMessage(),
+                ]);
+        } catch (\Throwable $e) {
+            return $response
+                ->setStatusCode(500)
+                ->setData([
+                    'code' => 'internal_server_error',
+                    'message' => 'Internal Server Error',
+                ]);
+        }
+    }
+
+    public function removeCartItem(Request $request, JsonResponse $response): JsonResponse
+    {
+        try {
+            /** @var Context $context */
+            $context = AppContext::fromRequest($request);
+
+            /** @var string $cartItemId */
+            $cartItemId = $request->route()?->parameter('cart_item_id') ?? '';
+
+            $spec = new RemoveItemInput();
+            $spec->cartItemId = $cartItemId;
+
+            $this->cartService->removeCartItem($context, $spec);
+
+            return $response
+                ->setStatusCode(204);
         } catch (CartItemNotFoundException $e) {
             return $response
                 ->setStatusCode(404)

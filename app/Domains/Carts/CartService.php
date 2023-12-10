@@ -35,6 +35,9 @@ readonly class CartService implements CartServiceInterface
     ) {
     }
 
+    /**
+     * @inheritDoc
+     */
     public function listCarts(Context $context, ListCartsInput $input): ListCartsOutput
     {
         $response = new ListCartsOutput();
@@ -49,6 +52,9 @@ readonly class CartService implements CartServiceInterface
         return $response;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getCart(Context $context, GetCartInput $input): GetCartOutput
     {
         if (!Uuid::isValid($input->cartId)) {
@@ -71,6 +77,9 @@ readonly class CartService implements CartServiceInterface
         return $output;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function listCardItems(Context $context, GetCartItemsInput $input): GetCartItemsOutput
     {
         // get cart
@@ -89,7 +98,10 @@ readonly class CartService implements CartServiceInterface
         return $output;
     }
 
-    public function addItemToCart(Context $context, AddItemInput $input): AddItemOutput
+    /**
+     * @inheritDoc
+     */
+    public function addCartItem(Context $context, AddItemInput $input): AddItemOutput
     {
         // get cart
         $cart = $this->cartRepository->findById($input->cartId);
@@ -136,6 +148,9 @@ readonly class CartService implements CartServiceInterface
         return $output;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function updateCartItem(Context $context, UpdateItemInput $input): UpdateItemOutput
     {
         if ($input->quantity <= 0) {
@@ -174,9 +189,20 @@ readonly class CartService implements CartServiceInterface
         return $output;
     }
 
-    public function removeItemFromCart(Context $context, RemoveItemInput $input): RemoveItemOutput
+    /**
+     * @inheritDoc
+     */
+    public function removeCartItem(Context $context, RemoveItemInput $input): RemoveItemOutput
     {
-        throw new \Exception('not implemented');
+        // get cart item
+        $cartItem = $this->cartItemRepository->findById($input->cartItemId);
+        if (!$cartItem) {
+            throw new CartItemNotFoundException("Cart item [{$input->cartItemId}] not found");
+        }
+
+        $this->cartItemRepository->delete($cartItem->id);
+
+        return new RemoveItemOutput();
     }
 
     /**

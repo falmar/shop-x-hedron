@@ -210,7 +210,7 @@ class CartServiceTest extends TestCase
 
         // when
         try {
-            $service->addItemToCart($context, $spec);
+            $service->addCartItem($context, $spec);
 
             $this->fail('Expected exception to be thrown');
         } catch (\Throwable $th) {
@@ -234,7 +234,7 @@ class CartServiceTest extends TestCase
 
         // when
         try {
-            $service->addItemToCart($context, $spec);
+            $service->addCartItem($context, $spec);
 
             $this->fail('Expected exception to be thrown');
         } catch (\Throwable $th) {
@@ -260,12 +260,12 @@ class CartServiceTest extends TestCase
 
         // when
         try {
-            $service->addItemToCart($context, $spec);
+            $service->addCartItem($context, $spec);
 
             $calls++;
 
             // will exceed stock of 5
-            $service->addItemToCart($context, $spec);
+            $service->addCartItem($context, $spec);
 
             $this->fail('Expected exception to be thrown');
         } catch (\Throwable $th) {
@@ -289,7 +289,7 @@ class CartServiceTest extends TestCase
         $spec->quantity = 3;
 
         // when
-        $output = $service->addItemToCart($context, $spec);
+        $output = $service->addCartItem($context, $spec);
 
         // then
         $this->assertInstanceOf(CartItem::class, $output->item);
@@ -317,7 +317,7 @@ class CartServiceTest extends TestCase
         $spec->quantity = 3;
 
         // when
-        $output = $service->addItemToCart($context, $spec);
+        $output = $service->addCartItem($context, $spec);
 
         // then
         $this->assertInstanceOf(CartItem::class, $output->item);
@@ -428,7 +428,8 @@ class CartServiceTest extends TestCase
         }
     }
 
-    public function testUpdateCartItem_throw_out_of_stock(): void {
+    public function testUpdateCartItem_throw_out_of_stock(): void
+    {
         // given
         $this->seed(DomainSeeder::class);
         $context = AppContext::background();
@@ -449,7 +450,8 @@ class CartServiceTest extends TestCase
         }
     }
 
-    public function testUpdateCartItem_throw_exceeded_stock(): void {
+    public function testUpdateCartItem_throw_exceeded_stock(): void
+    {
         // given
         $this->seed(DomainSeeder::class);
         $context = AppContext::background();
@@ -470,7 +472,8 @@ class CartServiceTest extends TestCase
         }
     }
 
-    public function testUpdateCartItem_should_update_existing_entity(): void {
+    public function testUpdateCartItem_should_update_existing_entity(): void
+    {
         // given
         $this->seed(DomainSeeder::class);
         $context = AppContext::background();
@@ -494,6 +497,51 @@ class CartServiceTest extends TestCase
         $this->assertDatabaseHas('cart_items', [
             'id' => $cartItemId,
             'quantity' => $quantity,
+        ]);
+    }
+
+    public function testDeleteCartItem_should_throw_not_found(): void
+    {
+        // given
+        $this->seed(DomainSeeder::class);
+        $context = AppContext::background();
+
+        $cartItemId = '996cb20e-1e35-42c5-83b4-36a2e58e538f';
+
+        /** @var CartService $service */
+        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $spec = new \App\Domains\Carts\Specs\RemoveItemInput();
+        $spec->cartItemId = $cartItemId;
+
+        // when
+        try {
+            $service->removeCartItem($context, $spec);
+
+            $this->fail('Expected exception to be thrown');
+        } catch (\Throwable $th) {
+            $this->assertInstanceOf(\App\Domains\Carts\Exceptions\CartItemNotFoundException::class, $th);
+        }
+    }
+
+    public function testDeleteCartItem_should_delete_existing_entity(): void
+    {
+        // given
+        $this->seed(DomainSeeder::class);
+        $context = AppContext::background();
+
+        $cartItemId = '018c463c-2bf4-737d-90a4-4f9d03b52000';
+
+        /** @var CartService $service */
+        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $spec = new \App\Domains\Carts\Specs\RemoveItemInput();
+        $spec->cartItemId = $cartItemId;
+
+        // when
+        $service->removeCartItem($context, $spec);
+
+        // then
+        $this->assertSoftDeleted('cart_items', [
+            'id' => $cartItemId,
         ]);
     }
 }
