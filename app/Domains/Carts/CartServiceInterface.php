@@ -2,6 +2,7 @@
 
 namespace App\Domains\Carts;
 
+use App\Domains\Carts\Exceptions\CartItemQuantityExceededStockException;
 use App\Domains\Carts\Exceptions\CartNotFoundException;
 use App\Domains\Carts\Exceptions\InvalidUuidException;
 use App\Domains\Carts\Specs\AddItemInput;
@@ -16,6 +17,7 @@ use App\Domains\Carts\Specs\RemoveItemInput;
 use App\Domains\Carts\Specs\RemoveItemOutput;
 use App\Domains\Carts\Specs\UpdateItemInput;
 use App\Domains\Carts\Specs\UpdateItemOutput;
+use App\Domains\Products\Exceptions\ProductOutOfStockException;
 use App\Libraries\Context\Context;
 
 interface CartServiceInterface
@@ -55,6 +57,7 @@ interface CartServiceInterface
      * @param Context $context
      * @param AddItemInput $input
      * @return AddItemOutput
+     * @throws CartItemQuantityExceededStockException|ProductOutOfStockException
      */
     public function addItemToCart(Context $context, AddItemInput $input): AddItemOutput;
 

@@ -143,4 +143,74 @@ class CartControllerTest extends TestCase
             $response->assertJson($test['expect_data']);
         }
     }
+
+    public function testAddToCart_should_return_bad_request_out_of_stock()
+    {
+        // given
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+
+        // when
+        $response = $this->post('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items', [
+            'product_id' => '018c463c-2bf4-737d-90a4-4f9d03b50001',
+            'quantity' => 1,
+        ]);
+
+        // then
+        $response->assertStatus(400);
+        $response->assertJsonStructure([
+            'code',
+            'message',
+        ]);
+    }
+
+    public function testAddToCart_should_return_bad_request_exceeded_stock()
+    {
+        // given
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+
+        // when
+        $response = $this->post('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items', [
+            'product_id' => '018c463c-2bf4-737d-90a4-4f9d03b50010',
+            'quantity' => 10,
+        ]);
+
+        // then
+        $response->assertStatus(400);
+        $response->assertJsonStructure([
+            'code',
+            'message',
+        ]);
+    }
+
+    public function testAddToCart_should_create_item() {
+        // given
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+
+        // when
+        $response = $this->post('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items', [
+            'product_id' => '018c463c-2bf4-737d-90a4-4f9d03b50000',
+            'quantity' => 1,
+        ]);
+
+        // then
+        $response->assertStatus(201);
+        $response->assertJsonStructure([
+            'data' => [
+                'id',
+                'cart_id',
+                'product_id',
+                'quantity',
+                'product' => [
+                    'id',
+                    'name',
+                    'price',
+                    'stock',
+                    'image_url'
+                ]
+            ],
+        ]);
+    }
 }

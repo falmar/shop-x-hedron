@@ -23,5 +23,6 @@ Route::group(['prefix' => '/v1'], function () {
     Route::group(['prefix' => '/carts'], function () {
         Route::get('/', [CartController::class, 'listCarts']);
         Route::get('/{cart_id}', [CartController::class, 'getCart']);
+        Route::post('/{cart_id}/items', [CartController::class, 'addItemToCart']);
     });
 });

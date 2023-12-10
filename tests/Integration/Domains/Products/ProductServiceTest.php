@@ -129,8 +129,8 @@ class ProductServiceTest extends TestCase
         $output = $service->listProducts($context, $spec);
 
         // then
-        $this->assertEquals(2, $output->total);
-        $this->assertCount(2, $output->products);
+        $this->assertEquals(3, $output->total);
+        $this->assertCount(3, $output->products);
         $this->assertContainsOnlyInstancesOf(\App\Domains\Products\Entities\Product::class, $output->products);
     }
 }

@@ -29,6 +29,16 @@ class ProductSeeder extends Seeder
                 'stock' => 0,
                 'review_rating' => 4.32,
                 'review_count' => 39
+            ],
+            [
+                'id' => '018c463c-2bf4-737d-90a4-4f9d03b50010',
+                'brand' => 'Columbia',
+                'name' => 'Zapatillas de montaña y trekking impermeables Hombre Columbia Redmond',
+                'image_url' => 'https://example.com/image3.jpg',
+                'price' => 7499,
+                'stock' => 5,
+                'review_rating' => 4.40,
+                'review_count' => 500
             ]
         ];
 

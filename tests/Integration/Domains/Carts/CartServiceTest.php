@@ -4,8 +4,10 @@ namespace Tests\Integration\Domains\Carts;
 
 use App\Domains\Carts\CartService;
 use App\Domains\Carts\Entities\Cart;
+use App\Domains\Carts\Entities\CartItem;
 use App\Domains\Carts\Exceptions\InvalidUuidException;
 use App\Domains\Carts\Specs\ListCartsInput;
+use App\Domains\Products\Entities\Product;
 use App\Libraries\Context\AppContext;
 use Database\Seeders\Tests\Carts\DomainSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -188,5 +190,141 @@ class CartServiceTest extends TestCase
             $this->assertInstanceOf(Cart::class, $output->cart);
             $this->assertSame($test['expect']['item_count'], $output->itemCount);
         }
+    }
+
+    public function testAddCartItem_should_throw_out_of_stock(): void
+    {
+        // given
+        $this->seed(DomainSeeder::class);
+        $context = AppContext::background();
+
+        /** @var CartService $service */
+        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+
+        $spec = new \App\Domains\Carts\Specs\AddItemInput();
+        $spec->cartId = '018c463c-2bf4-737d-90a4-4f9d03b51000';
+        $spec->productId = '018c463c-2bf4-737d-90a4-4f9d03b50001';
+        $spec->quantity = 3;
+
+        // when
+        try {
+            $service->addItemToCart($context, $spec);
+
+            $this->fail('Expected exception to be thrown');
+        } catch (\Throwable $th) {
+            $this->assertInstanceOf(\App\Domains\Products\Exceptions\ProductOutOfStockException::class, $th);
+        }
+    }
+
+    public function testAddCartItem_should_throw_exceeded_quantity(): void
+    {
+        // given
+        $this->seed(DomainSeeder::class);
+        $context = AppContext::background();
+
+        /** @var CartService $service */
+        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+
+        $spec = new \App\Domains\Carts\Specs\AddItemInput();
+        $spec->cartId = '018c463c-2bf4-737d-90a4-4f9d03b51000';
+        $spec->productId = '018c463c-2bf4-737d-90a4-4f9d03b50010';
+        $spec->quantity = 10;
+
+        // when
+        try {
+            $service->addItemToCart($context, $spec);
+
+            $this->fail('Expected exception to be thrown');
+        } catch (\Throwable $th) {
+            $this->assertInstanceOf(\App\Domains\Carts\Exceptions\CartItemQuantityExceededStockException::class, $th);
+        }
+    }
+
+    public function testAddCartItem_should_throw_exceeded_quantity_progressive(): void
+    {
+        // given
+        $this->seed(DomainSeeder::class);
+        $context = AppContext::background();
+
+        /** @var CartService $service */
+        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+
+        $spec = new \App\Domains\Carts\Specs\AddItemInput();
+        $spec->cartId = '018c463c-2bf4-737d-90a4-4f9d03b51000';
+        $spec->productId = '018c463c-2bf4-737d-90a4-4f9d03b50010';
+        $spec->quantity = 3;
+
+        $calls = 0;
+
+        // when
+        try {
+            $service->addItemToCart($context, $spec);
+
+            $calls++;
+
+            // will exceed stock of 5
+            $service->addItemToCart($context, $spec);
+
+            $this->fail('Expected exception to be thrown');
+        } catch (\Throwable $th) {
+            $this->assertEquals(1, $calls);
+            $this->assertInstanceOf(\App\Domains\Carts\Exceptions\CartItemQuantityExceededStockException::class, $th);
+        }
+    }
+
+    public function testAddCartItem_should_create_new_entity(): void
+    {
+        // given
+        $this->seed(DomainSeeder::class);
+        $context = AppContext::background();
+
+        /** @var CartService $service */
+        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+
+        $spec = new \App\Domains\Carts\Specs\AddItemInput();
+        $spec->cartId = '018c463c-2bf4-737d-90a4-4f9d03b51000';
+        $spec->productId = '018c463c-2bf4-737d-90a4-4f9d03b50010';
+        $spec->quantity = 3;
+
+        // when
+        $output = $service->addItemToCart($context, $spec);
+
+        // then
+        $this->assertInstanceOf(CartItem::class, $output->item);
+        $this->assertInstanceOf(Product::class, $output->item->product);
+
+        $this->assertDatabaseHas('cart_items', [
+            'cart_id' => '018c463c-2bf4-737d-90a4-4f9d03b51000',
+            'product_id' => '018c463c-2bf4-737d-90a4-4f9d03b50010',
+            'quantity' => 3,
+        ]);
+    }
+
+    public function testAddCartItem_should_update_existing_entity(): void
+    {
+        // given
+        $this->seed(DomainSeeder::class);
+        $context = AppContext::background();
+
+        /** @var CartService $service */
+        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+
+        $spec = new \App\Domains\Carts\Specs\AddItemInput();
+        $spec->cartId = '018c463c-2bf4-737d-90a4-4f9d03b51000';
+        $spec->productId = '018c463c-2bf4-737d-90a4-4f9d03b50000';
+        $spec->quantity = 3;
+
+        // when
+        $output = $service->addItemToCart($context, $spec);
+
+        // then
+        $this->assertInstanceOf(CartItem::class, $output->item);
+        $this->assertInstanceOf(Product::class, $output->item->product);
+
+        $this->assertDatabaseHas('cart_items', [
+            'cart_id' => '018c463c-2bf4-737d-90a4-4f9d03b51000',
+            'product_id' => '018c463c-2bf4-737d-90a4-4f9d03b50000',
+            'quantity' => 4,
+        ]);
     }
 }

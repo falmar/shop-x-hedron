@@ -2,6 +2,8 @@
 
 namespace App\Domains\Carts\Entities;
 
+use App\Domains\Products\Entities\Product;
+
 class CartItem implements \JsonSerializable
 {
     public string $id;
@@ -18,6 +20,10 @@ class CartItem implements \JsonSerializable
 
     /** @var \DateTimeImmutable|null */
     public ?\DateTimeImmutable $deletedAt;
+
+    // CROSSED-BOUNDARY
+    public ?Product $product = null;
+    // --
 
     /**
      * @param array<string, mixed> $data
@@ -46,7 +52,7 @@ class CartItem implements \JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return [
+        $data = [
             'id' => $this->id,
             'cart_id' => $this->cartId,
             'product_id' => $this->productId,
@@ -56,5 +62,11 @@ class CartItem implements \JsonSerializable
             'updated_at' => $this->updatedAt->format(\DateTimeInterface::RFC3339),
             'deleted_at' => $this->deletedAt?->format(\DateTimeInterface::RFC3339),
         ];
+
+        if ($this->product instanceof Product) {
+            $data['product'] = $this->product;
+        }
+
+        return $data;
     }
 }

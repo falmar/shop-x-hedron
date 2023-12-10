@@ -15,6 +15,15 @@ interface CartItemRepositoryInterface
     public function findById(string $itemId): ?CartItem;
 
     /**
+     * Get cart item by cart id and product id, basically to get existing card item by product id
+     *
+     * @param string $cartId
+     * @param string $productId
+     * @return CartItem|null
+     */
+    public function findByCartIdAndProductId(string $cartId, string $productId): ?CartItem;
+
+    /**
      * Get cart item by cart id and product id
      *
      * @param string $cartId

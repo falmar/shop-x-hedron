@@ -47,6 +47,53 @@ class CartItemRepositoryEloquentTest extends TestCase
         $this->assertMagicEntity($cartItem);
     }
 
+    public function testFindByCartAndProductIds_should_return_no_entity(): void
+    {
+        // given
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+
+        /** @var CartItemRepositoryEloquent $repo */
+        $repo = $this->app->make(CartItemRepositoryEloquent::class);
+
+        $tests = [
+            ['', ''],
+            ['018c463c-2bf4-737d-90a4-4f9d03b51000', ''],
+            ['', '018c463c-2bf4-737d-90a4-4f9d03b50000'],
+        ];
+
+        foreach ($tests as $test) {
+            // when
+            $cartItem = $repo->findByCartIdAndProductId($test[0], $test[1]);
+
+            // then
+            $this->assertNull($cartItem, 'CartItem should be null');
+            $this->assertNotInstanceOf(CartItem::class, $cartItem, 'CartItem should not be an instance of CartItem');
+        }
+    }
+
+    public function testFindByCartAndProductIds_should_return_an_entity(): void
+    {
+        // given
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+
+        /** @var CartItemRepositoryEloquent $repo */
+        $repo = $this->app->make(CartItemRepositoryEloquent::class);
+
+        $tests = [
+            ['018c463c-2bf4-737d-90a4-4f9d03b51000', '018c463c-2bf4-737d-90a4-4f9d03b50000'],
+        ];
+
+        foreach ($tests as $test) {
+            // when
+            $cartItem = $repo->findByCartIdAndProductId($test[0], $test[1]);
+
+            // then
+            $this->assertInstanceOf(CartItem::class, $cartItem, 'CartItem should an instance of CartItem');
+
+            $this->assertMagicEntity($cartItem);
+        }
+    }
+
     public function testCountByCartId_should_return_zero(): void
     {
         // given

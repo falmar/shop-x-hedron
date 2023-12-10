@@ -2,12 +2,12 @@
 
 namespace App\Domains\Carts\Specs;
 
-use App\Domains\Carts\ValueObjects\CartListItem;
+use App\Domains\Carts\Entities\CartItem;
 
 class GetCartItemsOutput
 {
     public int $total = 0;
 
-    /** @var list<CartListItem> */
+    /** @var list<CartItem> */
     public array $items = [];
 }

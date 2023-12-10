@@ -59,7 +59,7 @@ class ProductRepositoryEloquentTest extends TestCase
         $total = $repo->count([]);
 
         // then
-        $this->assertEquals(2, $total, 'should be 2');
+        $this->assertEquals(3, $total);
     }
 
     public function testList_should_return_entities(): void
@@ -223,7 +223,7 @@ class ProductRepositoryEloquentTest extends TestCase
         // then
         $this->assertFalse($result, 'should be false');
 
-        $this->assertDatabaseCount('products', 2);
+        $this->assertDatabaseCount('products', 3);
     }
 
     private function assertMagicEntity(Product $entity): void
