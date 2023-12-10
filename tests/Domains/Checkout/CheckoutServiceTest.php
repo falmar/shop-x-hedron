@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration\Domains\Checkout;
+namespace Tests\Domains\Checkout;
 
 use App\Domains\Checkout\CheckoutService;
 use App\Libraries\Context\AppContext;
@@ -12,7 +12,7 @@ class CheckoutServiceTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testCheckout_should_throw_item_product_mismatch()
+    public function testCheckout_should_throw_item_product_mismatch(): void
     {
         // given
         $context = AppContext::background();
@@ -34,7 +34,7 @@ class CheckoutServiceTest extends TestCase
         $this->fail('Should throw an exception');
     }
 
-    public function testCheckout_should_checkout_and_deduct_stock()
+    public function testCheckout_should_deduct_stock(): void
     {
         // given
         $context = AppContext::background();
@@ -58,6 +58,27 @@ class CheckoutServiceTest extends TestCase
         $this->assertDatabaseHas('products', [
             'id' => '018c463c-2bf4-737d-90a4-4f9d03b50000',
             'stock' => 98
+        ]);
+    }
+
+    public function testCheckout_should_delete_cart(): void {
+        // given
+        $context = AppContext::background();
+        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
+        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+
+        /** @var CheckoutService $service */
+        $service = $this->app->make(CheckoutService::class);
+
+        $input = new \App\Domains\Checkout\Specs\CheckoutInput();
+        $input->cartId = '018c463c-2bf4-737d-90a4-4f9d03b51001';
+
+        // when
+        $output = $service->checkout($context, $input);
+
+        // then
+        $this->assertSoftDeleted('carts', [
+            'id' => '018c463c-2bf4-737d-90a4-4f9d03b51001'
         ]);
     }
 }

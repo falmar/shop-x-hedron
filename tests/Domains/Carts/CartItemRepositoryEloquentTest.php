@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration\Domains\Carts;
+namespace Tests\Domains\Carts;
 
 use App\Domains\Carts\CartItemRepositoryEloquent;
 use App\Domains\Carts\Entities\CartItem;

@@ -15,6 +15,8 @@ use App\Domains\Carts\Specs\GetCartItemsOutput;
 use App\Domains\Carts\Specs\GetCartOutput;
 use App\Domains\Carts\Specs\ListCartsInput;
 use App\Domains\Carts\Specs\ListCartsOutput;
+use App\Domains\Carts\Specs\RemoveCartInput;
+use App\Domains\Carts\Specs\RemoveCartOutput;
 use App\Domains\Carts\Specs\RemoveItemInput;
 use App\Domains\Carts\Specs\RemoveItemOutput;
 use App\Domains\Carts\Specs\UpdateItemInput;
@@ -43,6 +45,15 @@ interface CartServiceInterface
      * @throws CartNotFoundException
      */
     public function getCart(Context $context, GetCartInput $input): GetCartOutput;
+
+    /**
+     * Delete the cart
+     *
+     * @param Context $context
+     * @param RemoveCartInput $input
+     * @return RemoveCartOutput
+     */
+    public function removeCart(Context $context, RemoveCartInput $input): RemoveCartOutput;
 
     /**
      * List cart items

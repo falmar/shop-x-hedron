@@ -16,6 +16,8 @@ use App\Domains\Carts\Specs\GetCartItemsOutput;
 use App\Domains\Carts\Specs\GetCartOutput;
 use App\Domains\Carts\Specs\ListCartsInput;
 use App\Domains\Carts\Specs\ListCartsOutput;
+use App\Domains\Carts\Specs\RemoveCartInput;
+use App\Domains\Carts\Specs\RemoveCartOutput;
 use App\Domains\Carts\Specs\RemoveItemInput;
 use App\Domains\Carts\Specs\RemoveItemOutput;
 use App\Domains\Carts\Specs\UpdateItemInput;
@@ -58,7 +60,6 @@ readonly class CartService implements CartServiceInterface
     public function getCart(Context $context, GetCartInput $input): GetCartOutput
     {
         $cart = $this->cartRepository->findById($input->cartId);
-
         if (!$cart) {
             throw new CartNotFoundException("Cart [{$input->cartId}] not found");
         }
@@ -71,6 +72,23 @@ readonly class CartService implements CartServiceInterface
         }
 
         return $output;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function removeCart(Context $context, RemoveCartInput $input): RemoveCartOutput
+    {
+        $cart = $this->cartRepository->findById($input->cartId);
+        if (!$cart) {
+            throw new CartNotFoundException("Cart [{$input->cartId}] not found");
+        }
+
+        $this->cartRepository->delete($cart->id);
+
+        // don't delete items because can be fetched by order for display
+
+        return new RemoveCartOutput();
     }
 
     /**

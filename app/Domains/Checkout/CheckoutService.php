@@ -5,6 +5,7 @@ namespace App\Domains\Checkout;
 use App\Domains\Carts\CartServiceInterface;
 use App\Domains\Carts\Specs\GetCartInput;
 use App\Domains\Carts\Specs\GetCartItemsInput;
+use App\Domains\Carts\Specs\RemoveCartInput;
 use App\Domains\Checkout\Exceptions\CartItemProductMismatchException;
 use App\Domains\Checkout\Exceptions\NoCartItemsException;
 use App\Domains\Checkout\Specs\CheckoutInput;
@@ -47,7 +48,7 @@ readonly class CheckoutService implements CheckoutServiceInterface
         // let raise an exception if the cart is not found
         $items = $this->cartService->listCardItems($context, $itemsSpec)->items;
 
-        $productIds = array_map(fn($item) => $item->productId, $items);
+        $productIds = array_map(fn ($item) => $item->productId, $items);
 
         $productSpec = new ListProductsInput();
         $productSpec->ids = $productIds;
@@ -90,6 +91,11 @@ readonly class CheckoutService implements CheckoutServiceInterface
 
             $amount += $item->price * $item->quantity;
         }
+
+        $deleteSpec = new RemoveCartInput();
+        $deleteSpec->cartId = $cartOutput->cart->id;
+        $this->cartService->removeCart($context, $deleteSpec);
+        // --
 
         // create order
         $order = new CheckoutOrder(

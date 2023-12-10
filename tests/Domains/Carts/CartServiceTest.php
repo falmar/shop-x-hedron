@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration\Domains\Carts;
+namespace Tests\Domains\Carts;
 
 use App\Domains\Carts\CartService;
 use App\Domains\Carts\Entities\Cart;
@@ -469,6 +469,49 @@ class CartServiceTest extends TestCase
         // then
         $this->assertSoftDeleted('cart_items', [
             'id' => $cartItemId,
+        ]);
+    }
+
+    public function testDeleteCart_should_throw_not_found(): void
+    {
+        // given
+        $this->seed(DomainSeeder::class);
+        $context = AppContext::background();
+
+        $cartId = '996cb20e-1e35-42c5-83b4-36a2e58e538f';
+
+        /** @var CartService $service */
+        $service = $this->app->make(CartService::class);
+        $spec = new \App\Domains\Carts\Specs\RemoveCartInput();
+        $spec->cartId = $cartId;
+
+        // when
+        $this->expectException(\App\Domains\Carts\Exceptions\CartNotFoundException::class);
+        $service->removeCart($context, $spec);
+
+        // then
+        $this->fail('Should throw an exception');
+    }
+
+    public function testDeleteCart_should_delete_entity(): void
+    {
+        // given
+        $this->seed(DomainSeeder::class);
+        $context = AppContext::background();
+
+        $cartId = '018c463c-2bf4-737d-90a4-4f9d03b51000';
+
+        /** @var CartService $service */
+        $service = $this->app->make(CartService::class);
+        $spec = new \App\Domains\Carts\Specs\RemoveCartInput();
+        $spec->cartId = $cartId;
+
+        // when
+        $service->removeCart($context, $spec);
+
+        // then
+        $this->assertSoftDeleted('carts', [
+            'id' => $cartId,
         ]);
     }
 }
