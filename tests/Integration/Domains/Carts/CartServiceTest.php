@@ -7,6 +7,7 @@ use App\Domains\Carts\Entities\Cart;
 use App\Domains\Carts\Entities\CartItem;
 use App\Domains\Carts\Exceptions\CartItemQuantityExceededStockException;
 use App\Domains\Carts\Exceptions\InvalidUuidException;
+use App\Domains\Carts\Specs\GetCartInput;
 use App\Domains\Carts\Specs\ListCartsInput;
 use App\Domains\Products\Entities\Product;
 use App\Domains\Products\Exceptions\ProductOutOfStockException;
@@ -26,7 +27,7 @@ class CartServiceTest extends TestCase
         $context = AppContext::background();
 
         /** @var CartService $service */
-        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $service = $this->app->make(CartService::class);
 
         $spec = new ListCartsInput();
 
@@ -63,7 +64,7 @@ class CartServiceTest extends TestCase
         $context = AppContext::background();
 
         /** @var CartService $service */
-        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $service = $this->app->make(CartService::class);
 
         $spec = new ListCartsInput();
 
@@ -97,7 +98,7 @@ class CartServiceTest extends TestCase
         $context = AppContext::background();
 
         /** @var CartService $service */
-        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $service = $this->app->make(CartService::class);
 
         $tests = [
             [
@@ -112,7 +113,7 @@ class CartServiceTest extends TestCase
 
         foreach ($tests as $test) {
             // given
-            $spec = new \App\Domains\Carts\Specs\GetCartInput();
+            $spec = new GetCartInput();
             $spec->cartId = $test['input'];
 
             // when
@@ -133,9 +134,9 @@ class CartServiceTest extends TestCase
         $context = AppContext::background();
 
         /** @var CartService $service */
-        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $service = $this->app->make(CartService::class);
 
-        $spec = new \App\Domains\Carts\Specs\GetCartInput();
+        $spec = new GetCartInput();
         $spec->cartId = '996cb20e-1e35-42c5-83b4-36a2e58e538f';
 
         // when
@@ -155,7 +156,7 @@ class CartServiceTest extends TestCase
         $context = AppContext::background();
 
         /** @var CartService $service */
-        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $service = $this->app->make(CartService::class);
 
         $tests = [
             [
@@ -178,7 +179,7 @@ class CartServiceTest extends TestCase
             ]
         ];
 
-        $spec = new \App\Domains\Carts\Specs\GetCartInput();
+        $spec = new GetCartInput();
 
         foreach ($tests as $test) {
             // given
@@ -201,7 +202,7 @@ class CartServiceTest extends TestCase
         $context = AppContext::background();
 
         /** @var CartService $service */
-        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $service = $this->app->make(CartService::class);
 
         $spec = new \App\Domains\Carts\Specs\AddItemInput();
         $spec->cartId = '018c463c-2bf4-737d-90a4-4f9d03b51000';
@@ -214,7 +215,7 @@ class CartServiceTest extends TestCase
 
             $this->fail('Expected exception to be thrown');
         } catch (\Throwable $th) {
-            $this->assertInstanceOf(\App\Domains\Products\Exceptions\ProductOutOfStockException::class, $th);
+            $this->assertInstanceOf(ProductOutOfStockException::class, $th);
         }
     }
 
@@ -225,7 +226,7 @@ class CartServiceTest extends TestCase
         $context = AppContext::background();
 
         /** @var CartService $service */
-        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $service = $this->app->make(CartService::class);
 
         $spec = new \App\Domains\Carts\Specs\AddItemInput();
         $spec->cartId = '018c463c-2bf4-737d-90a4-4f9d03b51000';
@@ -238,7 +239,7 @@ class CartServiceTest extends TestCase
 
             $this->fail('Expected exception to be thrown');
         } catch (\Throwable $th) {
-            $this->assertInstanceOf(\App\Domains\Carts\Exceptions\CartItemQuantityExceededStockException::class, $th);
+            $this->assertInstanceOf(CartItemQuantityExceededStockException::class, $th);
         }
     }
 
@@ -249,7 +250,7 @@ class CartServiceTest extends TestCase
         $context = AppContext::background();
 
         /** @var CartService $service */
-        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $service = $this->app->make(CartService::class);
 
         $spec = new \App\Domains\Carts\Specs\AddItemInput();
         $spec->cartId = '018c463c-2bf4-737d-90a4-4f9d03b51000';
@@ -270,7 +271,7 @@ class CartServiceTest extends TestCase
             $this->fail('Expected exception to be thrown');
         } catch (\Throwable $th) {
             $this->assertEquals(1, $calls);
-            $this->assertInstanceOf(\App\Domains\Carts\Exceptions\CartItemQuantityExceededStockException::class, $th);
+            $this->assertInstanceOf(CartItemQuantityExceededStockException::class, $th);
         }
     }
 
@@ -281,7 +282,7 @@ class CartServiceTest extends TestCase
         $context = AppContext::background();
 
         /** @var CartService $service */
-        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $service = $this->app->make(CartService::class);
 
         $spec = new \App\Domains\Carts\Specs\AddItemInput();
         $spec->cartId = '018c463c-2bf4-737d-90a4-4f9d03b51000';
@@ -309,7 +310,7 @@ class CartServiceTest extends TestCase
         $context = AppContext::background();
 
         /** @var CartService $service */
-        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $service = $this->app->make(CartService::class);
 
         $spec = new \App\Domains\Carts\Specs\AddItemInput();
         $spec->cartId = '018c463c-2bf4-737d-90a4-4f9d03b51000';
@@ -338,7 +339,7 @@ class CartServiceTest extends TestCase
         $cartId = '996cb20e-1e35-42c5-83b4-36a2e58e538f';
 
         /** @var CartService $service */
-        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $service = $this->app->make(CartService::class);
         $spec = new \App\Domains\Carts\Specs\GetCartItemsInput();
         $spec->cartId = $cartId;
 
@@ -360,7 +361,7 @@ class CartServiceTest extends TestCase
         $cartId = '018c463c-2bf4-737d-90a4-4f9d03b51000';
 
         /** @var CartService $service */
-        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $service = $this->app->make(CartService::class);
         $spec = new \App\Domains\Carts\Specs\GetCartItemsInput();
         $spec->cartId = $cartId;
 
@@ -392,7 +393,7 @@ class CartServiceTest extends TestCase
         $cartId = '018c463c-2bf4-737d-90a4-4f9d03b51000';
 
         /** @var CartService $service */
-        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $service = $this->app->make(CartService::class);
         $spec = new \App\Domains\Carts\Specs\GetCartItemsInput();
         $spec->cartId = $cartId;
         $spec->withProduct = false;
@@ -413,7 +414,7 @@ class CartServiceTest extends TestCase
         $context = AppContext::background();
 
         /** @var CartService $service */
-        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $service = $this->app->make(CartService::class);
         $spec = new \App\Domains\Carts\Specs\UpdateItemInput();
         $spec->cartItemId = '996cb20e-1e35-42c5-83b4-36a2e58e538f';
         $spec->quantity = 1;
@@ -435,7 +436,7 @@ class CartServiceTest extends TestCase
         $context = AppContext::background();
 
         /** @var CartService $service */
-        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $service = $this->app->make(CartService::class);
         $spec = new \App\Domains\Carts\Specs\UpdateItemInput();
         $spec->cartItemId = '018c463c-2bf4-737d-90a4-4f9d03b52001';
         $spec->quantity = 2;
@@ -457,7 +458,7 @@ class CartServiceTest extends TestCase
         $context = AppContext::background();
 
         /** @var CartService $service */
-        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $service = $this->app->make(CartService::class);
         $spec = new \App\Domains\Carts\Specs\UpdateItemInput();
         $spec->cartItemId = '018c463c-2bf4-737d-90a4-4f9d03b52000';
         $spec->quantity = 200;
@@ -482,7 +483,7 @@ class CartServiceTest extends TestCase
         $quantity = 2;
 
         /** @var CartService $service */
-        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $service = $this->app->make(CartService::class);
         $spec = new \App\Domains\Carts\Specs\UpdateItemInput();
         $spec->cartItemId = $cartItemId;
         $spec->quantity = $quantity;
@@ -509,7 +510,7 @@ class CartServiceTest extends TestCase
         $cartItemId = '996cb20e-1e35-42c5-83b4-36a2e58e538f';
 
         /** @var CartService $service */
-        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $service = $this->app->make(CartService::class);
         $spec = new \App\Domains\Carts\Specs\RemoveItemInput();
         $spec->cartItemId = $cartItemId;
 
@@ -532,7 +533,7 @@ class CartServiceTest extends TestCase
         $cartItemId = '018c463c-2bf4-737d-90a4-4f9d03b52000';
 
         /** @var CartService $service */
-        $service = $this->app->make(\App\Domains\Carts\CartService::class);
+        $service = $this->app->make(CartService::class);
         $spec = new \App\Domains\Carts\Specs\RemoveItemInput();
         $spec->cartItemId = $cartItemId;
 
