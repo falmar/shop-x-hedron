@@ -27,7 +27,13 @@ readonly class ProductRepositoryEloquent implements ProductRepositoryInterface
 
     public function count(array $options): int
     {
-        return $this->eloquent->count();
+        $query = $this->eloquent->query();
+
+        if (isset($options['ids']) && is_array($options['ids']) && count($options['ids']) > 0) {
+            $query->whereIn('id', $options['ids']);
+        }
+
+        return $query->count();
     }
 
     /**
@@ -35,9 +41,14 @@ readonly class ProductRepositoryEloquent implements ProductRepositoryInterface
      */
     public function list(array $options): array
     {
-        $eloquentItems = $this->eloquent->get();
+        $query = $this->eloquent->query();
+
+        if (isset($options['ids']) && is_array($options['ids']) && count($options['ids']) > 0) {
+            $query->whereIn('id', $options['ids']);
+        }
 
         // TODO: from options take a limit/offset or cursor based pagination
+        $eloquentItems = $query->get();
 
         $items = [];
         foreach ($eloquentItems as $eloquentItem) {

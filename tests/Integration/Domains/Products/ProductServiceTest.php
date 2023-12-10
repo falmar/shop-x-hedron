@@ -133,4 +133,54 @@ class ProductServiceTest extends TestCase
         $this->assertCount(3, $output->products);
         $this->assertContainsOnlyInstancesOf(\App\Domains\Products\Entities\Product::class, $output->products);
     }
+
+    public function testList_should_return_a_list_of_products_by_ids(): void
+    {
+        // given
+        $context = AppContext::background();
+        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+
+        /** @var ProductServiceInterface $service */
+        $service = $this->app->make(ProductServiceInterface::class);
+        $spec = new ListProductsInput();
+        $spec->ids = [
+            '018c463c-2bf4-737d-90a4-4f9d03b50000',
+            '018c463c-2bf4-737d-90a4-4f9d03b50001',
+        ];
+
+        // when
+        $output = $service->listProducts($context, $spec);
+
+        // then
+        $this->assertEquals(2, $output->total);
+        $this->assertCount(2, $output->products);
+        $this->assertIsArray($output->products);
+        $this->assertNotEmpty($output->products);
+        $this->assertContainsOnlyInstancesOf(\App\Domains\Products\Entities\Product::class, $output->products);
+    }
+
+    public function testList_should_not_return_a_list_of_products_by_ids(): void
+    {
+        // given
+        $context = AppContext::background();
+        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+
+        /** @var ProductServiceInterface $service */
+        $service = $this->app->make(ProductServiceInterface::class);
+        $spec = new ListProductsInput();
+        $spec->ids = [
+            '018c463c-2bf4-737d-90a4-009d03b50000',
+            'bad_uuid',
+            null
+        ];
+
+        // when
+        $output = $service->listProducts($context, $spec);
+
+        // then
+        $this->assertEquals(0, $output->total);
+        $this->assertCount(0, $output->products);
+        $this->assertIsArray($output->products);
+        $this->assertEmpty($output->products);
+    }
 }

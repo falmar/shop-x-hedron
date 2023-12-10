@@ -36,6 +36,7 @@ readonly class ProductService implements ProductServiceInterface
     {
         $options = [
             'search' => $input->search,
+            'ids' => $input->ids,
         ];
 
         $count = $this->productRepository->count($options);

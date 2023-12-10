@@ -82,6 +82,50 @@ class ProductRepositoryEloquentTest extends TestCase
         $this->assertMagicEntity($products[0]);
     }
 
+    public function testList_should_return_entities_by_ids(): void {
+        // given
+        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+        $this->expectsDatabaseQueryCount(1);
+
+        /** @var ProductRepositoryEloquent $repo */
+        $repo = $this->app->make(ProductRepositoryEloquent::class);
+
+        // when
+        $products = $repo->list([
+            'ids' => [
+                '018c463c-2bf4-737d-90a4-4f9d03b50000',
+                '018c463c-2bf4-737d-90a4-4f9d03b50001',
+            ]
+        ]);
+
+        // then
+        $this->assertNotEmpty($products, 'should not be empty');
+        $this->assertIsArray($products, 'should be an array');
+        $this->assertContainsOnlyInstancesOf(Product::class, $products, 'should be an array of Product');
+    }
+
+    public function testList_should_not_return_entities_by_ids(): void {
+        // given
+        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+        $this->expectsDatabaseQueryCount(1);
+
+        /** @var ProductRepositoryEloquent $repo */
+        $repo = $this->app->make(ProductRepositoryEloquent::class);
+
+        // when
+        $products = $repo->list([
+            'ids' => [
+                '018c463c-2bf4-737d-90a4-4f9d03b50002',
+                'bad-uuid',
+                null
+            ]
+        ]);
+
+        // then
+        $this->assertEmpty($products, 'should be empty');
+        $this->assertIsArray($products, 'should be an array');
+    }
+
     public function testSave_should_create_a_new_item(): void
     {
         // given
