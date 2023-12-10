@@ -13,6 +13,10 @@ class CartSeeder extends Seeder
             [
                 'id' => '018c463c-2bf4-737d-90a4-4f9d03b51000',
                 'session_id' => '018c463c-2bf4-737d-90a4-009d03b51100',
+            ],
+            [
+                'id' => '018c463c-2bf4-737d-90a4-4f9d03b51001',
+                'session_id' => '018c463c-2bf4-737d-90a4-009d03b51101',
             ]
         ];
 

@@ -26,7 +26,14 @@ class CartItemSeeder extends Seeder
                 'product_id' => '018c463c-2bf4-737d-90a4-4f9d03b50001',
                 'quantity' => 1,
                 'price' => 5000
-            ]
+            ],
+            [
+                'id' =>         '018c463c-2bf4-737d-90a4-4f9d03b52100',
+                'cart_id' =>    '018c463c-2bf4-737d-90a4-4f9d03b51001',
+                'product_id' => '018c463c-2bf4-737d-90a4-4f9d03b50000',
+                'quantity' => 2,
+                'price' => 199
+            ],
         ];
 
         foreach ($items as $item) {

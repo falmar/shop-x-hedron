@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\v1\CartController;
+use App\Http\Controllers\v1\CheckoutController;
 use App\Http\Controllers\v1\ProductsController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,5 +28,9 @@ Route::group(['prefix' => '/v1'], function () {
         Route::post('/{cart_id}/items', [CartController::class, 'addItemToCart']);
         Route::post('/{cart_id}/items/{cart_item_id}', [CartController::class, 'updateCartItem']);
         Route::delete('/{cart_id}/items/{cart_item_id}', [CartController::class, 'removeCartItem']);
+    });
+
+    Route::group(['prefix' => '/checkout'], function () {
+        Route::post('/{cart_id}', [CheckoutController::class, 'checkout']);
     });
 });

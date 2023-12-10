@@ -2,11 +2,14 @@
 
 namespace Tests\Integration\Domains\Products;
 
+use App\Domains\Products\Entities\Product;
 use App\Domains\Products\Exceptions\ProductNotFoundException;
 use App\Domains\Products\Exceptions\ProductOutOfStockException;
+use App\Domains\Products\ProductRepositoryInterface;
 use App\Domains\Products\ProductServiceInterface;
 use App\Domains\Products\Specs\GetProductInput;
 use App\Domains\Products\Specs\ListProductsInput;
+use App\Domains\Products\Specs\UpdateProductStockInput;
 use App\Libraries\Context\AppContext;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -182,5 +185,85 @@ class ProductServiceTest extends TestCase
         $this->assertCount(0, $output->products);
         $this->assertIsArray($output->products);
         $this->assertEmpty($output->products);
+    }
+
+    public function testUpdateStock_should_throw_not_found(): void
+    {
+        // given
+        $context = AppContext::background();
+        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+        $spec = new UpdateProductStockInput();
+        $spec->productId = '018c463c-2bf4-737d-90a4-009d03b50000';
+        $spec->quantity = 1;
+
+        /** @var ProductServiceInterface $service */
+        $service = $this->app->make(ProductServiceInterface::class);
+
+        try {
+            // when
+            $service->updateProductStock($context, $spec);
+
+            $this->fail("ProductNotFoundException was not thrown");
+        } catch (\Throwable $th) {
+            $this->assertInstanceOf(ProductNotFoundException::class, $th);
+        }
+    }
+
+    public function testUpdateStock_should_use_product_from_context(): void
+    {
+        // given
+        $context = AppContext::background();
+        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+        $spec = new UpdateProductStockInput();
+        $spec->productId = '018c463c-2bf4-737d-90a4-4f9d03b50000';
+        $spec->quantity = -5;
+
+        /** @var ProductServiceInterface $service */
+        $service = $this->app->make(ProductServiceInterface::class);
+        /** @var ProductRepositoryInterface $repo */
+        $repo = $this->app->make(ProductRepositoryInterface::class);
+
+        /** @var Product $product */
+        $product = $repo->findById($spec->productId);
+        $this->assertEquals(100, $product->stock);
+
+        // add to context
+        $context = $context->withAttribute('product', $product);
+
+        // when
+        $output = $service->updateProductStock($context, $spec);
+
+        // then
+        $this->assertEquals(95, $output->product->stock);
+        $this->assertEquals($product, $output->product);
+
+        $this->assertDatabaseHas('products', [
+            'id' => $product->id,
+            'stock' => 95
+        ]);
+    }
+
+    public function testUpdateStock_should_update_stock(): void
+    {
+        // given
+        $context = AppContext::background();
+        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+        $spec = new UpdateProductStockInput();
+        $spec->productId = '018c463c-2bf4-737d-90a4-4f9d03b50000';
+        $spec->quantity = -5;
+
+        /** @var ProductServiceInterface $service */
+        $service = $this->app->make(ProductServiceInterface::class);
+
+        // when
+        $output = $service->updateProductStock($context, $spec);
+
+        // then
+        $this->assertEquals(95, $output->product->stock);
+
+        $this->assertDatabaseHas('products', [
+            'id' => '018c463c-2bf4-737d-90a4-4f9d03b50000',
+            'stock' => 95
+        ]);
     }
 }

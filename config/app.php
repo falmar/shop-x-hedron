@@ -174,6 +174,7 @@ return [
          */
         App\Domains\Carts\ServiceProvider::class,
         App\Domains\Products\ServiceProvider::class,
+        App\Domains\Checkout\ServiceProvider::class,
     ])->toArray(),
 
     /*

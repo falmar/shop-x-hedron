@@ -6,7 +6,6 @@ use App\Domains\Carts\CartService;
 use App\Domains\Carts\Entities\Cart;
 use App\Domains\Carts\Entities\CartItem;
 use App\Domains\Carts\Exceptions\CartItemQuantityExceededStockException;
-use App\Domains\Carts\Exceptions\InvalidUuidException;
 use App\Domains\Carts\Specs\GetCartInput;
 use App\Domains\Carts\Specs\ListCartsInput;
 use App\Domains\Products\Entities\Product;
@@ -19,43 +18,6 @@ use Tests\TestCase;
 class CartServiceTest extends TestCase
 {
     use RefreshDatabase;
-
-    public function testListCards_should_throw_uuid_exception(): void
-    {
-        // given
-        $this->seed(DomainSeeder::class);
-        $context = AppContext::background();
-
-        /** @var CartService $service */
-        $service = $this->app->make(CartService::class);
-
-        $spec = new ListCartsInput();
-
-        $tests = [
-            [
-                'input' => '',
-                'expected' => InvalidUuidException::class,
-            ],
-            [
-                'input' => 'invalid-cart-id',
-                'expected' => InvalidUuidException::class,
-            ],
-        ];
-
-        foreach ($tests as $test) {
-            // given
-            $spec->sessionId = $test['input'];
-
-            // when
-            try {
-                $service->listCarts($context, $spec);
-
-                $this->fail('Expected exception to be thrown');
-            } catch (\Throwable $th) {
-                $this->assertInstanceOf($test['expected'], $th);
-            }
-        }
-    }
 
     public function testListCards_should_return_a_list_of_entities(): void
     {
@@ -88,42 +50,6 @@ class CartServiceTest extends TestCase
 
             // then
             $this->assertCount($test['expected'], $output->carts);
-        }
-    }
-
-    public function testGetCard_should_throw_uuid_exception(): void
-    {
-        // given
-        $this->seed(DomainSeeder::class);
-        $context = AppContext::background();
-
-        /** @var CartService $service */
-        $service = $this->app->make(CartService::class);
-
-        $tests = [
-            [
-                'input' => '',
-                'expected' => InvalidUuidException::class,
-            ],
-            [
-                'input' => 'invalid-cart-id',
-                'expected' => InvalidUuidException::class,
-            ],
-        ];
-
-        foreach ($tests as $test) {
-            // given
-            $spec = new GetCartInput();
-            $spec->cartId = $test['input'];
-
-            // when
-            try {
-                $service->getCart($context, $spec);
-
-                $this->fail('Expected exception to be thrown');
-            } catch (\Throwable $th) {
-                $this->assertInstanceOf($test['expected'], $th);
-            }
         }
     }
 

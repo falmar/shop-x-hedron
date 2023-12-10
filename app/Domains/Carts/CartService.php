@@ -7,7 +7,7 @@ use App\Domains\Carts\Exceptions\CartItemNotFoundException;
 use App\Domains\Carts\Exceptions\CartItemQuantityExceededStockException;
 use App\Domains\Carts\Exceptions\CartItemQuantityException;
 use App\Domains\Carts\Exceptions\CartNotFoundException;
-use App\Domains\Carts\Exceptions\InvalidUuidException;
+use App\Domains\Carts\Exceptions\NoSessionIdException;
 use App\Domains\Carts\Specs\AddItemInput;
 use App\Domains\Carts\Specs\AddItemOutput;
 use App\Domains\Carts\Specs\GetCartInput;
@@ -42,8 +42,8 @@ readonly class CartService implements CartServiceInterface
     {
         $response = new ListCartsOutput();
 
-        if (!Uuid::isValid($input->sessionId)) {
-            throw new InvalidUuidException('Session ID is required');
+        if (!$input->sessionId) {
+            throw new NoSessionIdException('Session ID is required');
         }
 
         $carts = $this->cartRepository->listBySessionId($input->sessionId);
@@ -57,10 +57,6 @@ readonly class CartService implements CartServiceInterface
      */
     public function getCart(Context $context, GetCartInput $input): GetCartOutput
     {
-        if (!Uuid::isValid($input->cartId)) {
-            throw new InvalidUuidException('Cart ID is required');
-        }
-
         $cart = $this->cartRepository->findById($input->cartId);
 
         if (!$cart) {
@@ -70,7 +66,7 @@ readonly class CartService implements CartServiceInterface
         $output = new GetCartOutput();
         $output->cart = $cart;
 
-        if ($input->withItemCount || $input->withItems) {
+        if ($input->withItemCount) {
             $output->itemCount = $this->cartItemRepository->countByCartId($cart->id);
         }
 

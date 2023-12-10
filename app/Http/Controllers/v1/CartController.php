@@ -7,7 +7,7 @@ use App\Domains\Carts\Exceptions\CartItemNotFoundException;
 use App\Domains\Carts\Exceptions\CartItemQuantityExceededStockException;
 use App\Domains\Carts\Exceptions\CartItemQuantityException;
 use App\Domains\Carts\Exceptions\CartNotFoundException;
-use App\Domains\Carts\Exceptions\InvalidUuidException;
+use App\Domains\Carts\Exceptions\NoSessionIdException;
 use App\Domains\Carts\Specs\AddItemInput;
 use App\Domains\Carts\Specs\GetCartInput;
 use App\Domains\Carts\Specs\GetCartItemsInput;
@@ -44,7 +44,7 @@ class CartController extends Controller
                 ->setData([
                     'data' => $carts->carts,
                 ]);
-        } catch (InvalidUuidException $e) {
+        } catch (NoSessionIdException $e) {
             return $response
                 ->setStatusCode(400)
                 ->setData([
@@ -73,7 +73,6 @@ class CartController extends Controller
             $spec = new GetCartInput();
             $spec->cartId = $cartId;
             $spec->withItemCount = $request->get('with_item_count') == '1';
-            $spec->withItems = $request->get('with_items') == '1';
 
             $carts = $this->cartService->getCart($context, $spec);
 
@@ -82,13 +81,6 @@ class CartController extends Controller
                 ->setData([
                     'data' => $carts->cart,
                     'item_count' => $carts->itemCount,
-                ]);
-        } catch (InvalidUuidException $e) {
-            return $response
-                ->setStatusCode(400)
-                ->setData([
-                    'code' => 'bad_request',
-                    'message' => $e->getMessage(),
                 ]);
         } catch (CartNotFoundException $e) {
             return $response

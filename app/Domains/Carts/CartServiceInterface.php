@@ -6,7 +6,7 @@ use App\Domains\Carts\Exceptions\CartItemNotFoundException;
 use App\Domains\Carts\Exceptions\CartItemQuantityExceededStockException;
 use App\Domains\Carts\Exceptions\CartItemQuantityException;
 use App\Domains\Carts\Exceptions\CartNotFoundException;
-use App\Domains\Carts\Exceptions\InvalidUuidException;
+use App\Domains\Carts\Exceptions\NoSessionIdException;
 use App\Domains\Carts\Specs\AddItemInput;
 use App\Domains\Carts\Specs\AddItemOutput;
 use App\Domains\Carts\Specs\GetCartInput;
@@ -30,7 +30,7 @@ interface CartServiceInterface
      * @param Context $context
      * @param ListCartsInput $input
      * @return ListCartsOutput
-     * @throws InvalidUuidException
+     * @throws NoSessionIdException
      */
     public function listCarts(Context $context, ListCartsInput $input): ListCartsOutput;
 
@@ -40,7 +40,7 @@ interface CartServiceInterface
      * @param Context $context
      * @param GetCartInput $input
      * @return GetCartOutput
-     * @throws InvalidUuidException|CartNotFoundException
+     * @throws CartNotFoundException
      */
     public function getCart(Context $context, GetCartInput $input): GetCartOutput;
 

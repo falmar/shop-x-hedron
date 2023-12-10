@@ -8,6 +8,8 @@ use App\Domains\Products\Specs\GetProductInput;
 use App\Domains\Products\Specs\GetProductOutput;
 use App\Domains\Products\Specs\ListProductsInput;
 use App\Domains\Products\Specs\ListProductsOutput;
+use App\Domains\Products\Specs\UpdateProductStockInput;
+use App\Domains\Products\Specs\UpdateProductStockOutput;
 use App\Libraries\Context\Context;
 
 readonly class ProductService implements ProductServiceInterface
@@ -27,6 +29,27 @@ readonly class ProductService implements ProductServiceInterface
         }
 
         $output = new GetProductOutput();
+        $output->product = $product;
+
+        return $output;
+    }
+
+    public function updateProductStock(Context $context, UpdateProductStockInput $input): UpdateProductStockOutput
+    {
+        $product = $context->getAttribute('product');
+        if (!$product || $product->id !== $input->productId) {
+            $product = $this->productRepository->findById($input->productId);
+        }
+
+        if (!$product) {
+            throw new ProductNotFoundException("Product [{$input->productId}] not found");
+        }
+
+        $product->stock += $input->quantity;
+
+        $this->productRepository->save($product);
+
+        $output = new UpdateProductStockOutput();
         $output->product = $product;
 
         return $output;
