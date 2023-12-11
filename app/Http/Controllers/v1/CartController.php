@@ -49,7 +49,7 @@ class CartController extends Controller
             return $response
                 ->setStatusCode(400)
                 ->setData([
-                    'code' => 'bad_request',
+                    'code' => 'no_session_id',
                     'message' => $e->getMessage(),
                 ]);
         } catch (\Throwable $e) {
@@ -87,7 +87,7 @@ class CartController extends Controller
             return $response
                 ->setStatusCode(404)
                 ->setData([
-                    'code' => 'not_found',
+                    'code' => 'cart_not_found',
                     'message' => $e->getMessage(),
                 ]);
         } catch (\Throwable $e) {
@@ -137,7 +137,7 @@ class CartController extends Controller
             $spec = new GetCartItemsInput();
             $spec->cartId = $cartId;
 
-            if ($request->get('with_products') == '0' || $request->get('with_products') == 'false   ') {
+            if ($request->get('with_products') == '0' || $request->get('with_products') == 'false') {
                 $spec->withProduct = false;
             }
 
@@ -153,7 +153,7 @@ class CartController extends Controller
             return $response
                 ->setStatusCode(404)
                 ->setData([
-                    'code' => 'not_found',
+                    'code' => 'cart_not_found',
                     'message' => $e->getMessage(),
                 ]);
         } catch (\Throwable $e) {
@@ -188,17 +188,19 @@ class CartController extends Controller
                     'data' => $item,
                 ]);
         } catch (ProductOutOfStockException|CartItemQuantityExceededStockException $e) {
+            $code = $e instanceof ProductOutOfStockException ? 'product_out_of_stock' : 'cart_item_quantity_exceeded_stock';
+
             return $response
                 ->setStatusCode(400)
                 ->setData([
-                    'code' => 'bad_request',
+                    'code' => $code,
                     'message' => $e->getMessage(),
                 ]);
         } catch (CartNotFoundException $e) {
             return $response
                 ->setStatusCode(404)
                 ->setData([
-                    'code' => 'not_found',
+                    'code' => 'cart_not_found',
                     'message' => $e->getMessage(),
                 ]);
         } catch (\Throwable $e) {
@@ -232,17 +234,28 @@ class CartController extends Controller
                     'data' => $item,
                 ]);
         } catch (ProductOutOfStockException|CartItemQuantityExceededStockException|CartItemQuantityException $e) {
+            $code = 'bad_request';
+            if ($e instanceof ProductOutOfStockException) {
+                $code = 'product_out_of_stock';
+            } elseif ($e instanceof CartItemQuantityExceededStockException) {
+                $code = 'cart_item_quantity_exceeded_stock';
+            } elseif ($e instanceof CartItemQuantityException) {
+                $code = 'cart_item_quantity';
+            }
+
             return $response
                 ->setStatusCode(400)
                 ->setData([
-                    'code' => 'bad_request',
+                    'code' => $code,
                     'message' => $e->getMessage(),
                 ]);
         } catch (CartNotFoundException|CartItemNotFoundException $e) {
+            $code = $e instanceof CartNotFoundException ? 'cart_not_found' : 'cart_item_not_found';
+
             return $response
                 ->setStatusCode(404)
                 ->setData([
-                    'code' => 'not_found',
+                    'code' => $code,
                     'message' => $e->getMessage(),
                 ]);
         } catch (\Throwable $e) {
@@ -272,10 +285,12 @@ class CartController extends Controller
             return $response
                 ->setStatusCode(204);
         } catch (CartNotFoundException|CartItemNotFoundException $e) {
+            $code = $e instanceof CartNotFoundException ? 'cart_not_found' : 'cart_item_not_found';
+
             return $response
                 ->setStatusCode(404)
                 ->setData([
-                    'code' => 'not_found',
+                    'code' => $code,
                     'message' => $e->getMessage(),
                 ]);
         } catch (\Throwable $e) {

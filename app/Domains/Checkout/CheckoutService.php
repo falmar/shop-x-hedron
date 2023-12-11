@@ -6,8 +6,9 @@ use App\Domains\Carts\CartServiceInterface;
 use App\Domains\Carts\Specs\GetCartInput;
 use App\Domains\Carts\Specs\GetCartItemsInput;
 use App\Domains\Carts\Specs\RemoveCartInput;
-use App\Domains\Checkout\Exceptions\CartItemProductMismatchException;
-use App\Domains\Checkout\Exceptions\NoCartItemsException;
+use App\Domains\Checkout\Exceptions\ProductMismatchException;
+use App\Domains\Checkout\Exceptions\QuantityMismatchException;
+use App\Domains\Checkout\Exceptions\NoItemsException;
 use App\Domains\Checkout\Specs\CheckoutInput;
 use App\Domains\Checkout\Specs\CheckoutOutput;
 use App\Domains\Checkout\ValueObjects\CheckoutOrder;
@@ -39,7 +40,7 @@ readonly class CheckoutService implements CheckoutServiceInterface
         $cartOutput = $this->cartService->getCart($context, $cartSpec);
 
         if ($cartOutput->itemCount === 0) {
-            throw new NoCartItemsException('Cart is empty');
+            throw new NoItemsException('Cart is empty');
         }
 
         $itemsSpec = new GetCartItemsInput();
@@ -61,14 +62,14 @@ readonly class CheckoutService implements CheckoutServiceInterface
 
         // check is available
         foreach ($items as $item) {
-            $item->product = $products[$item->productId];
+            $item->product = $products[$item->productId] ?? null;
 
             if (!$item->product) {
-                throw new CartItemProductMismatchException('Product not found');
+                throw new ProductMismatchException('Product not found');
             } elseif ($item->product->stock === 0) {
-                throw new CartItemProductMismatchException('Product is out of stock');
+                throw new QuantityMismatchException('Product is out of stock');
             } elseif ($item->product->stock < $item->quantity) {
-                throw new CartItemProductMismatchException('Product stock is too low');
+                throw new QuantityMismatchException('Product stock is too low');
             }
         }
 

@@ -3,8 +3,9 @@
 namespace App\Domains\Checkout;
 
 use App\Domains\Carts\Exceptions\CartNotFoundException;
-use App\Domains\Checkout\Exceptions\CartItemProductMismatchException;
-use App\Domains\Checkout\Exceptions\NoCartItemsException;
+use App\Domains\Checkout\Exceptions\ProductMismatchException;
+use App\Domains\Checkout\Exceptions\QuantityMismatchException;
+use App\Domains\Checkout\Exceptions\NoItemsException;
 use App\Domains\Checkout\Specs\CheckoutInput;
 use App\Domains\Checkout\Specs\CheckoutOutput;
 use App\Libraries\Context\Context;
@@ -17,7 +18,7 @@ interface CheckoutServiceInterface
      * @param Context $context
      * @param CheckoutInput $input
      * @return CheckoutOutput
-     * @throws CartItemProductMismatchException|NoCartItemsException
+     * @throws QuantityMismatchException|NoItemsException|ProductMismatchException
      * @throws CartNotFoundException
      */
     public function checkout(Context $context, CheckoutInput $input): CheckoutOutput;

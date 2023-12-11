@@ -94,9 +94,7 @@ readonly class ProductRepositoryEloquent implements ProductRepositoryInterface
             $eloquentItem->review_count = $product->reviewCount;
         }
 
-        if (!$eloquentItem->save()) {
-            return false;
-        }
+        $eloquentItem->save();
 
         $product->id = $eloquentItem->id;
         $product->createdAt = $eloquentItem->created_at->toDateTimeImmutable();

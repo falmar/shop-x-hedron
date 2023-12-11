@@ -269,7 +269,7 @@ class ProductRepositoryEloquentTest extends TestCase
         // then
         $this->assertFalse($result, 'should be false');
 
-        $this->assertDatabaseCount('products', 3);
+        $this->assertDatabaseCount('products', 4);
     }
 
     private function assertMagicEntity(Product $entity): void

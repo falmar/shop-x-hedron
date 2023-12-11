@@ -6,6 +6,7 @@ use App\Domains\Carts\CartService;
 use App\Domains\Carts\Entities\Cart;
 use App\Domains\Carts\Entities\CartItem;
 use App\Domains\Carts\Exceptions\CartItemQuantityExceededStockException;
+use App\Domains\Carts\Exceptions\CartNotFoundException;
 use App\Domains\Carts\Specs\CreateCartInput;
 use App\Domains\Carts\Specs\GetCartInput;
 use App\Domains\Carts\Specs\ListCartsInput;
@@ -120,6 +121,30 @@ class CartServiceTest extends TestCase
             // then
             $this->assertInstanceOf(Cart::class, $output->cart);
             $this->assertSame($test['expect']['item_count'], $output->itemCount);
+        }
+    }
+
+    public function testAddCartItem_should_throw_not_found(): void
+    {
+        // given
+        $this->seed(DomainSeeder::class);
+        $context = AppContext::background();
+
+        /** @var CartService $service */
+        $service = $this->app->make(CartService::class);
+
+        $spec = new \App\Domains\Carts\Specs\AddItemInput();
+        $spec->cartId = '018c463c-2bf4-737d-90a4-4f9d03b51050';
+        $spec->productId = '018c463c-2bf4-737d-90a4-4f9d03b50001';
+        $spec->quantity = 3;
+
+        // when
+        try {
+            $service->addCartItem($context, $spec);
+
+            $this->fail('Expected exception to be thrown');
+        } catch (\Throwable $th) {
+            $this->assertInstanceOf(CartNotFoundException::class, $th);
         }
     }
 

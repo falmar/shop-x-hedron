@@ -25,7 +25,7 @@ class CartControllerTest extends TestCase
         ]);
 
         $response->assertJson([
-            'code' => 'bad_request',
+            'code' => 'no_session_id',
         ]);
     }
 
@@ -64,6 +64,10 @@ class CartControllerTest extends TestCase
         $response->assertJsonStructure([
             'code',
             'message',
+        ]);
+
+        $response->assertJson([
+            'code' => 'cart_not_found',
         ]);
     }
 
@@ -132,7 +136,6 @@ class CartControllerTest extends TestCase
     {
         // given
         $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
-        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
 
         // when
         $response = $this->post('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items', [
@@ -146,13 +149,17 @@ class CartControllerTest extends TestCase
             'code',
             'message',
         ]);
+
+        $response->assertJson([
+            'code' => 'product_out_of_stock',
+        ]);
     }
 
     public function testAddToCart_should_return_bad_request_exceeded_stock(): void
     {
         // given
         $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
-        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+
 
         // when
         $response = $this->post('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items', [
@@ -166,13 +173,17 @@ class CartControllerTest extends TestCase
             'code',
             'message',
         ]);
+
+        $response->assertJson([
+            'code' => 'cart_item_quantity_exceeded_stock',
+        ]);
     }
 
     public function testAddToCart_should_create_item(): void
     {
         // given
         $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
-        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+
 
         // when
         $response = $this->post('/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items', [
@@ -217,6 +228,10 @@ class CartControllerTest extends TestCase
             $response->assertJsonStructure([
                 'code',
                 'message',
+            ]);
+
+            $response->assertJson([
+                'code' => 'cart_not_found',
             ]);
         }
     }
@@ -311,6 +326,10 @@ class CartControllerTest extends TestCase
                 'code',
                 'message',
             ]);
+
+            $response->assertJson([
+                'code' => 'cart_item_not_found',
+            ]);
         }
     }
 
@@ -339,32 +358,9 @@ class CartControllerTest extends TestCase
                 'code',
                 'message',
             ]);
-        }
-    }
 
-    public function testUpdateItem_should_return_bad_request_on_same_quantity(): void
-    {
-        // given
-        $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
-
-        $inputs = [
-            '1'
-        ];
-
-        foreach ($inputs as $input) {
-            // when
-            $response = $this->post(
-                '/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52000',
-                [
-                    'quantity' => $input,
-                ]
-            );
-
-            // then
-            $response->assertStatus(400);
-            $response->assertJsonStructure([
-                'code',
-                'message',
+            $response->assertJson([
+                'code' => 'cart_item_quantity',
             ]);
         }
     }
@@ -373,7 +369,7 @@ class CartControllerTest extends TestCase
     {
         // given
         $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
-        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+
 
         // when
         $response = $this->post(
@@ -389,13 +385,17 @@ class CartControllerTest extends TestCase
             'code',
             'message',
         ]);
+
+        $response->assertJson([
+            'code' => 'cart_item_quantity_exceeded_stock',
+        ]);
     }
 
     public function testUpdateItem_should_return_bad_request_out_of_stock(): void
     {
         // given
         $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
-        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+
 
         // when
         $response = $this->post(
@@ -411,13 +411,17 @@ class CartControllerTest extends TestCase
             'code',
             'message',
         ]);
+
+        $response->assertJson([
+            'code' => 'product_out_of_stock',
+        ]);
     }
 
     public function testUpdateItem_should_update_item(): void
     {
         // given
         $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
-        $this->seed(\Database\Seeders\Tests\Products\DomainSeeder::class);
+
 
         // when
         $response = $this->post(
@@ -447,7 +451,7 @@ class CartControllerTest extends TestCase
         ]);
     }
 
-    public function testRemoveItem_should_throw_not_found(): void
+    public function testRemoveItem_should_throw_item_not_found(): void
     {
         // given
         $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
@@ -465,6 +469,10 @@ class CartControllerTest extends TestCase
             $response->assertJsonStructure([
                 'code',
                 'message',
+            ]);
+
+            $response->assertJson([
+                'code' => 'cart_item_not_found',
             ]);
         }
     }

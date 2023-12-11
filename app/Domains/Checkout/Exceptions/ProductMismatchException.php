@@ -2,6 +2,6 @@
 
 namespace App\Domains\Checkout\Exceptions;
 
-class NoCartItemsException extends \Exception
+class ProductMismatchException extends \Exception
 {
 }

@@ -194,8 +194,6 @@ readonly class CartService implements CartServiceInterface
         $cartItem = $this->cartItemRepository->findById($input->cartItemId);
         if (!$cartItem) {
             throw new CartItemNotFoundException("Cart item [{$input->cartItemId}] not found");
-        } elseif ($input->quantity == $cartItem->quantity) {
-            throw new CartItemQuantityException('Quantity must be different than current quantity');
         }
 
         // get product for cart item

@@ -39,6 +39,17 @@ class ProductSeeder extends Seeder
                 'stock' => 5,
                 'review_rating' => 4.40,
                 'review_count' => 500
+            ],
+            [
+                'id' => '018c463c-2bf4-737d-90a4-4f9d03b50020',
+                'brand' => 'Adidas',
+                'name' => 'Balón de Fútbol Adidas Euro 24 Fussballliebe League box',
+                'image_url' => 'https://example.com/image4.jpg',
+                'price' => 2899,
+                'stock' => 5,
+                'review_rating' => 5,
+                'review_count' => 2,
+                'deleted_at' => '2021-01-01 00:00:00'
             ]
         ];
 
@@ -55,7 +66,8 @@ class ProductSeeder extends Seeder
                 'price' => $item['price'],
                 'stock' => $item['stock'],
                 'review_rating' => $item['review_rating'],
-                'review_count' => $item['review_count']
+                'review_count' => $item['review_count'],
+                'deleted_at' => $item['deleted_at'] ?? null
             ]);
         }
     }

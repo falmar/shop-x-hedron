@@ -4,7 +4,9 @@ namespace App\Http\Controllers\v1;
 
 use App\Domains\Carts\Exceptions\CartNotFoundException;
 use App\Domains\Checkout\CheckoutServiceInterface;
-use App\Domains\Checkout\Exceptions\CartItemProductMismatchException;
+use App\Domains\Checkout\Exceptions\NoItemsException;
+use App\Domains\Checkout\Exceptions\ProductMismatchException;
+use App\Domains\Checkout\Exceptions\QuantityMismatchException;
 use App\Domains\Checkout\Specs\CheckoutInput;
 use App\Http\Controllers\Controller;
 use App\Libraries\Context\AppContext;
@@ -43,14 +45,24 @@ class CheckoutController extends Controller
             return $response
                 ->setStatusCode(404)
                 ->setData([
-                    'code' => 'not_found',
+                    'code' => 'cart_not_found',
                     'message' => $e->getMessage(),
                 ]);
-        } catch (CartItemProductMismatchException $e) {
+        } catch (QuantityMismatchException|ProductMismatchException|NoItemsException $e) {
+            $code = 'bad_request';
+
+            if ($e instanceof QuantityMismatchException) {
+                $code = 'cart_item_quantity_mismatch';
+            } else if ($e instanceof ProductMismatchException) {
+                $code = 'cart_item_product_mismatch';
+            } else if ($e instanceof NoItemsException) {
+                $code = 'cart_is_empty';
+            }
+
             return $response
                 ->setStatusCode(400)
                 ->setData([
-                    'code' => 'bad_request',
+                    'code' => $code,
                     'message' => $e->getMessage(),
                 ]);
         } catch (\Throwable $th) {
