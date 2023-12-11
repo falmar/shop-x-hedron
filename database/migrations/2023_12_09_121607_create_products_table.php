@@ -21,7 +21,7 @@ return new class () extends Migration {
             $table->integer('price')->default(0); # in cents like stripe
             $table->integer('stock')->default(0);
             $table->integer('review_count')->default(0);
-            $table->decimal('review_rating', 1, 2)->default(0.0);
+            $table->decimal('review_rating')->default(0.0);
 
             $table->timestamps(3);
             $table->softDeletes('deleted_at', 3);

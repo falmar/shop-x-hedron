@@ -8,8 +8,6 @@ spec:
   template:
     spec:
       volumes:
-        - name: sqlite
-          emptyDir: { }
         - name: dotenv
           secret:
             secretName: laravel-env
@@ -18,15 +16,9 @@ spec:
           image: php-image
           imagePullPolicy: Always
           volumeMounts:
-            - name: sqlite
-              mountPath: /php-app/sqlite
             - name: dotenv
               mountPath: /php-app/secrets
           env:
-            - name: DB_CONNECTION
-              value: sqlite
-            - name: DB_DATABASE
-              value: /php-app/sqlite/database.sqlite
             - name: DOTENV_PATH
               value: /php-app/secrets
         - name: nginx
@@ -35,19 +27,12 @@ spec:
       initContainers:
         - name: migrate
           env:
-            - name: DB_CONNECTION
-              value: sqlite
-            - name: DB_DATABASE
-              value: /php-app/sqlite/database.sqlite
             - name: DOTENV_PATH
               value: /php-app/secrets
           volumeMounts:
-            - name: sqlite
-              mountPath: /php-app/sqlite
             - name: dotenv
               mountPath: /php-app/secrets
           command: [ "/bin/sh", "-c" ]
           args:
             - |
-              touch /php-app/sqlite/database.sqlite
-              php artisan migrate
+              php artisan migrate --force
