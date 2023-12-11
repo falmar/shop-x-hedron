@@ -3,6 +3,7 @@ info:
   title: Shop X Hedron
   version: 0.0.1
 servers:
+  - url: https://api.x-hedron.lavieri.dev
   - url: http://localhost:8080
 tags:
   - name: Products

@@ -11,7 +11,27 @@
 
 I have used DDD to define the program interfaces and the business logic, the code is located at `app/Domains` folder
 
-The service interfaces were build around RPC with *Input *Output, similar to gRPC messages for request/response.
+The service interfaces were build around RPC with *Input *Output, similar to gRPC messages for request/response. Although this is just HTTP Rest API
+
+The tests are located at `tests` folder. Services, Repos and Controllers are tested.
+
+Feel free to navigate the code, I have tried to keep it as simple as possible. If you have any questions please let me know.
+
+### Running with hosted UI
+
+- The API is hosted at [https://api.x-hedron.lavieri.dev](https://api.x-hedron.lavieri.dev)
+- A rudimentary Shop UI is hosted at [https://shop.x-hedron.lavieri.dev/products](https://shop.x-hedron.lavieri.dev/products)
+
+### OpenApi Spec with Swagger UI and Docker
+
+```bash
+# at project root directory
+$ docker run -p 8081:8080 -v $PWD:/php-app \
+  -e "SWAGGER_JSON=/php-app/api/v1/openapi.json" \
+  swaggerapi/swagger-ui
+```
+
+Then open [http://localhost:8081](http://localhost:8081) in your browser, select the hosted API or the localhost API which
 
 ### Running locally
 

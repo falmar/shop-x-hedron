@@ -42,7 +42,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{api_host}}/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items",
+									"raw": "{{api_host}}/api/v1/carts/018c58c3-6980-73bf-9657-fb882b240433/items",
 									"host": [
 										"{{api_host}}"
 									],
@@ -50,7 +50,7 @@
 										"api",
 										"v1",
 										"carts",
-										"018c463c-2bf4-737d-90a4-4f9d03b51000",
+										"018c58c3-6980-73bf-9657-fb882b240433",
 										"items"
 									],
 									"query": [
@@ -80,7 +80,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{api_host}}/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items",
+									"raw": "{{api_host}}/api/v1/carts/018c5543-794c-704b-ad23-916ca832ca53/items",
 									"host": [
 										"{{api_host}}"
 									],
@@ -88,7 +88,7 @@
 										"api",
 										"v1",
 										"carts",
-										"018c463c-2bf4-737d-90a4-4f9d03b51000",
+										"018c5543-794c-704b-ad23-916ca832ca53",
 										"items"
 									]
 								}
@@ -110,7 +110,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{api_host}}/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000/items/018c463c-2bf4-737d-90a4-4f9d03b52000",
+									"raw": "{{api_host}}/api/v1/carts/018c58c3-6980-73bf-9657-fb882b240433/items/018c58d0-f4f3-739b-9e17-4b66b9fc1113",
 									"host": [
 										"{{api_host}}"
 									],
@@ -118,9 +118,9 @@
 										"api",
 										"v1",
 										"carts",
-										"018c463c-2bf4-737d-90a4-4f9d03b51000",
+										"018c58c3-6980-73bf-9657-fb882b240433",
 										"items",
-										"018c463c-2bf4-737d-90a4-4f9d03b52000"
+										"018c58d0-f4f3-739b-9e17-4b66b9fc1113"
 									],
 									"query": [
 										{
@@ -181,7 +181,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_host}}/api/v1/carts?session_id=018c463c-2bf4-737d-90a4-009d03b51100",
+							"raw": "{{api_host}}/api/v1/carts?session_id=018c5606-8539-7085-9a5a-66eaf9d719d5",
 							"host": [
 								"{{api_host}}"
 							],
@@ -193,7 +193,7 @@
 							"query": [
 								{
 									"key": "session_id",
-									"value": "018c463c-2bf4-737d-90a4-009d03b51100"
+									"value": "018c5606-8539-7085-9a5a-66eaf9d719d5"
 								}
 							]
 						}
@@ -201,12 +201,12 @@
 					"response": []
 				},
 				{
-					"name": "Get Carts",
+					"name": "Get Cart",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_host}}/api/v1/carts/018c463c-2bf4-737d-90a4-4f9d03b51000?with_items=1",
+							"raw": "{{api_host}}/api/v1/carts/018c58b8-d0dd-71fd-9f58-c837e1ff913c?with_item_count=1",
 							"host": [
 								"{{api_host}}"
 							],
@@ -214,13 +214,32 @@
 								"api",
 								"v1",
 								"carts",
-								"018c463c-2bf4-737d-90a4-4f9d03b51000"
+								"018c58b8-d0dd-71fd-9f58-c837e1ff913c"
 							],
 							"query": [
 								{
-									"key": "with_items",
+									"key": "with_item_count",
 									"value": "1"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Cart",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api_host}}/api/v1/carts",
+							"host": [
+								"{{api_host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"carts"
 							]
 						}
 					},
@@ -294,7 +313,7 @@
 	"variable": [
 		{
 			"key": "api_host",
-			"value": "http://localhost:8080",
+			"value": "https://api.x-hedron.lavieri.dev",
 			"type": "string"
 		}
 	]

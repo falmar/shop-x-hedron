@@ -1,0 +1,584 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Shop X Hedron",
+    "version": "0.0.1"
+  },
+  "servers": [
+    {
+      "url": "https://api.x-hedron.lavieri.dev"
+    },
+    {
+      "url": "http://localhost:8080"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Products"
+    },
+    {
+      "name": "Carts"
+    },
+    {
+      "name": "Carts > Items"
+    },
+    {
+      "name": "Checkout"
+    }
+  ],
+  "paths": {
+    "/api/v1/products": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Product List",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Product"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/carts/{cart_id}/items": {
+      "get": {
+        "tags": [
+          "Carts > Items"
+        ],
+        "summary": "List Items",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/cart_id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CartItem"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cart Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Carts > Items"
+        ],
+        "summary": "Add Item",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/cart_id"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "product_id": "018c463c-2bf4-737d-90a4-4f9d03b50010",
+                  "quantity": 1
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalid_product_id": {
+                    "value": {
+                      "code": "invalid_product_id",
+                      "message": "Invalid product_id"
+                    }
+                  },
+                  "invalid_quantity": {
+                    "value": {
+                      "code": "invalid_quantity",
+                      "message": "Invalid quantity"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cart Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/carts/{cart_id}/items/{cart_item_id}": {
+      "post": {
+        "tags": [
+          "Carts > Items"
+        ],
+        "summary": "Update Item",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/cart_id"
+          },
+          {
+            "$ref": "#/components/parameters/cart_item_id"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "quantity": 1
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalid_quantity": {
+                    "value": {
+                      "code": "invalid_quantity",
+                      "message": "Invalid quantity"
+                    }
+                  },
+                  "out_of_stock": {
+                    "value": {
+                      "code": "out_of_stock",
+                      "message": "Out of stock"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Carts > Items"
+        ],
+        "summary": "Delete Item",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/cart_id"
+          },
+          {
+            "$ref": "#/components/parameters/cart_item_id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Cart Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/carts": {
+      "get": {
+        "tags": [
+          "Carts"
+        ],
+        "summary": "List Carts",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/session_id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Cart"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalid_session_id": {
+                    "value": {
+                      "code": "invalid_session_id",
+                      "message": "Invalid session_id"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/carts/{cart_id}": {
+      "get": {
+        "tags": [
+          "Carts"
+        ],
+        "summary": "Get Cart",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/cart_id"
+          },
+          {
+            "name": "with_item_count",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "example": "1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/checkout/{cart_id}": {
+      "post": {
+        "tags": [
+          "Checkout"
+        ],
+        "summary": "Checkout",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/cart_id"
+          }
+        ],
+        "requestBody": {
+          "content": {}
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutOrder"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/healthz": {
+      "get": {
+        "summary": "healthz",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "OK"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "cart_id": {
+        "name": "cart_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "996cb20e-1e35-42c5-83b4-36a2e58e538f"
+        }
+      },
+      "cart_item_id": {
+        "name": "cart_item_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "996cb20e-1e35-42c5-83b4-36a2e58e538f"
+        }
+      },
+      "session_id": {
+        "name": "session_id",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "996cb20e-1e35-42c5-83b4-36a2e58e538f"
+        }
+      }
+    },
+    "schemas": {
+      "Cart": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "996cb20e-1e35-42c5-83b4-36a2e58e538f"
+          },
+          "session_id": {
+            "type": "string",
+            "example": "996cb20e-1e35-42c5-83b4-36a2e58e538f"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00Z"
+          }
+        }
+      },
+      "CartItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "996cb20e-1e35-42c5-83b4-36a2e58e538f"
+          },
+          "cart_id": {
+            "type": "string",
+            "example": "996cb20e-1e35-42c5-83b4-36a2e58e538f"
+          },
+          "product_id": {
+            "type": "string",
+            "example": "018c463c-2bf4-737d-90a4-4f9d03b50010"
+          },
+          "price": {
+            "type": "integer",
+            "example": 10000,
+            "description": "Price in cents"
+          },
+          "quantity": {
+            "type": "integer",
+            "example": 1
+          },
+          "product": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Product"
+              }
+            ],
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00Z"
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "996cb20e-1e35-42c5-83b4-36a2e58e538f"
+          },
+          "brand": {
+            "type": "string",
+            "example": "Nike"
+          },
+          "name": {
+            "type": "string",
+            "example": "Air Max 90"
+          },
+          "image_url": {
+            "type": "string",
+            "example": "https://example.com/image.jpg"
+          },
+          "price": {
+            "type": "integer",
+            "example": 10000,
+            "description": "in cents"
+          },
+          "stock": {
+            "type": "integer",
+            "example": 1
+          },
+          "review_count": {
+            "type": "integer",
+            "example": 1
+          },
+          "review_rating": {
+            "type": "number",
+            "example": 4.5
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T00:00:00Z"
+          }
+        }
+      },
+      "CheckoutOrder": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "996cb20e-1e35-42c5-83b4-36a2e58e538f"
+          },
+          "cart_id": {
+            "type": "string",
+            "example": "996cb20e-1e35-42c5-83b4-36a2e58e538f"
+          },
+          "amount": {
+            "type": "integer",
+            "example": 10000,
+            "description": "in cents"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "cart_not_found'"
+          },
+          "message": {
+            "type": "string",
+            "example": "Cart not found"
+          }
+        }
+      }
+    }
+  }
+}
