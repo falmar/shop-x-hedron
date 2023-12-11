@@ -3,7 +3,6 @@
 namespace App\Domains\Products;
 
 use App\Domains\Products\Entities\Product;
-use Carbon\Carbon;
 
 readonly class ProductRepositoryEloquent implements ProductRepositoryInterface
 {

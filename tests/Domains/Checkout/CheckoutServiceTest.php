@@ -3,7 +3,6 @@
 namespace Tests\Domains\Checkout;
 
 use App\Domains\Checkout\CheckoutService;
-use App\Domains\Checkout\Exceptions\ProductMismatchException;
 use App\Libraries\Context\AppContext;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Ramsey\Uuid\Uuid;
@@ -55,7 +54,8 @@ class CheckoutServiceTest extends TestCase
         $this->fail('Should throw an exception');
     }
 
-    public function testCheckout_should_throw_mismatch_on_product_not_found(): void {
+    public function testCheckout_should_throw_mismatch_on_product_not_found(): void
+    {
         // given
         $context = AppContext::background();
         $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);
@@ -74,7 +74,8 @@ class CheckoutServiceTest extends TestCase
         $this->fail('Should throw an exception');
     }
 
-    public function testCheckout_should_throw_no_items_exception(): void {
+    public function testCheckout_should_throw_no_items_exception(): void
+    {
         // given
         $context = AppContext::background();
         $this->seed(\Database\Seeders\Tests\Carts\DomainSeeder::class);

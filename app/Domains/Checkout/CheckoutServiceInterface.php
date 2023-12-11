@@ -3,9 +3,9 @@
 namespace App\Domains\Checkout;
 
 use App\Domains\Carts\Exceptions\CartNotFoundException;
+use App\Domains\Checkout\Exceptions\NoItemsException;
 use App\Domains\Checkout\Exceptions\ProductMismatchException;
 use App\Domains\Checkout\Exceptions\QuantityMismatchException;
-use App\Domains\Checkout\Exceptions\NoItemsException;
 use App\Domains\Checkout\Specs\CheckoutInput;
 use App\Domains\Checkout\Specs\CheckoutOutput;
 use App\Libraries\Context\Context;

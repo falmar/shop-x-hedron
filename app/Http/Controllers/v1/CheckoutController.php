@@ -53,9 +53,9 @@ class CheckoutController extends Controller
 
             if ($e instanceof QuantityMismatchException) {
                 $code = 'cart_item_quantity_mismatch';
-            } else if ($e instanceof ProductMismatchException) {
+            } elseif ($e instanceof ProductMismatchException) {
                 $code = 'cart_item_product_mismatch';
-            } else if ($e instanceof NoItemsException) {
+            } elseif ($e instanceof NoItemsException) {
                 $code = 'cart_is_empty';
             }
 
