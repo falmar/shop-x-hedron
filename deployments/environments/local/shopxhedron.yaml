@@ -35,4 +35,4 @@ spec:
           command: [ "/bin/sh", "-c" ]
           args:
             - |
-              php artisan migrate --force
+              php artisan migrate --seed --force
