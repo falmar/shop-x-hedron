@@ -15,6 +15,8 @@ The service interfaces were build around RPC with *Input *Output, similar to gRP
 
 The tests are located at `tests` folder. Services, Repos and Controllers are tested.
 
+Locally Sqlite is used as database, but it can be changed to any other SQL database supported by Laravel. The hosted API uses MySQL. _There is very basic db seed for products._ 
+
 Feel free to navigate the code, I have tried to keep it as simple as possible. If you have any questions please let me know.
 
 ### Running with hosted UI
@@ -56,7 +58,7 @@ $ cp .env.example .env
 $ docker exec -it shop-x-hedron-php-1 sh
 # once inside the container
 $ composer install
-$ php artisan migrate
+$ php artisan migrate --seed
 ```
 
 Everything should be ready to go. At this point you can use the Postman Collection or OpenAPI Specification to test the
